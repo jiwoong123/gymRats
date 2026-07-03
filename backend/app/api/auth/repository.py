@@ -12,9 +12,7 @@ class AuthRepository:
         email: str,
     ) -> User | None:
 
-        return db.scalar(
-            select(User).where(User.email == email)
-        )
+        return db.scalar(select(User).where(User.email == email))
 
     @staticmethod
     def create(

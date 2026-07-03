@@ -11,12 +11,10 @@ ALGORITHM = "HS256"
 
 
 def hash_password(password: str):
-
     return password_hash.hash(password)
 
 
 def verify_password(password: str, hashed: str):
-
     return password_hash.verify(password, hashed)
 
 
