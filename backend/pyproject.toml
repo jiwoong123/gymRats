@@ -5,10 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "email-validator>=2.3.0",
     "fastapi>=0.138.2",
     "oracledb>=4.0.1",
     "passlib[bcrypt]>=1.7.4",
     "psycopg[binary]>=3.3.4",
+    "pwdlib[argon2]>=0.3.0",
     "pydantic-settings>=2.14.2",
     "python-dotenv>=1.2.2",
     "python-jose>=3.5.0",
