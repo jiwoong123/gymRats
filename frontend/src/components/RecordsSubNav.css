@@ -1,0 +1,26 @@
+.records-subnav {
+  flex-shrink: 0;
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: #0a0a0f;
+  padding: 0 20px;
+  padding-top: 52px;
+}
+
+.subnav-item {
+  padding: 10px 16px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #7070a0;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s;
+}
+
+.subnav-item.active {
+  color: #c8ff00;
+  border-bottom-color: #c8ff00;
+}

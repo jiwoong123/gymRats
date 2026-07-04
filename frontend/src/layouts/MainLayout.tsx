@@ -1,20 +1,21 @@
-import { Outlet } from "react-router";
-
-// import Navbar from "../components/Navbar";
-// import Sidebar from "../components/Sidebar";
+import { Outlet, useLocation } from "react-router";
+import RecordsSubNav from "../components/RecordsSubNav";
+import BottomNav from "../components/BottomNav";
+import "./Layout.css";
 
 export default function MainLayout() {
+  const location = useLocation();
+  const isRecords = location.pathname.startsWith("/records");
+
   return (
-    <>
-      {/* <Navbar /> */}
-
-      <div style={{ display: "flex" }}>
-        {/* <Sidebar /> */}
-
-        <main style={{ flex: 1, padding: "20px" }}>
+    <div className="phone-shell-bg">
+      <div className="phone-shell">
+        {isRecords && <RecordsSubNav />}
+        <div className="phone-content">
           <Outlet />
-        </main>
+        </div>
+        <BottomNav />
       </div>
-    </>
+    </div>
   );
 }

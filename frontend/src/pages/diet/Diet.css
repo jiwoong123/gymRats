@@ -1,0 +1,597 @@
+.diet-page {
+  padding: 52px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Hero: calorie ring + macro bars */
+.diet-hero {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.kcal-ring-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 130px;
+  height: 130px;
+}
+
+.kcal-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.kcal-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #c8ff00;
+  line-height: 1;
+}
+
+.kcal-unit {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #7070a0;
+  margin-top: 1px;
+}
+
+.kcal-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kcal-goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kcal-goal-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7070a0;
+}
+
+.kcal-goal-val {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: #f0f0f5;
+}
+
+.kcal-goal-val.remain {
+  color: #c8ff00;
+}
+
+.macro-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.macro-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.macro-mini-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #7070a0;
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.macro-mini-bar-bg {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.macro-mini-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.macro-mini-val {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Protein card */
+.protein-card {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.protein-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.protein-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(200, 255, 0, 0.1);
+  border: 1px solid rgba(200, 255, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c8ff00;
+  flex-shrink: 0;
+}
+
+.protein-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f0f0f5;
+  line-height: 1;
+}
+
+.protein-sub {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.72rem;
+  color: #7070a0;
+  margin-top: 2px;
+}
+
+.protein-right {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-left: auto;
+  margin-top: -36px;
+}
+
+.protein-current {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #c8ff00;
+  line-height: 1;
+}
+
+.protein-goal {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.875rem;
+  color: #7070a0;
+}
+
+.protein-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.protein-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.protein-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #c8ff00, rgba(200, 255, 0, 0.6));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.protein-pct {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: #c8ff00;
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Macro balance */
+.macro-balance-card {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-section-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7070a0;
+}
+
+.macro-balance-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.macro-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.macro-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.8125rem;
+  color: #f0f0f5;
+  flex: 1;
+}
+
+.legend-val {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: #f0f0f5;
+}
+
+.legend-pct {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.72rem;
+  color: #7070a0;
+  width: 28px;
+  text-align: right;
+}
+
+/* Meals */
+.meals-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meal-card {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.meal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.meal-header:hover { background: rgba(255, 255, 255, 0.03); }
+
+.meal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.meal-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f0f0f5;
+  letter-spacing: 0.02em;
+}
+
+.meal-count {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(200, 255, 0, 0.1);
+  color: #c8ff00;
+  letter-spacing: 0.04em;
+}
+
+.meal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-kcal {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8125rem;
+  color: #7070a0;
+}
+
+.meal-chevron {
+  color: #7070a0;
+  transition: transform 0.2s;
+}
+
+.meal-chevron.open {
+  transform: rotate(180deg);
+}
+
+.meal-body {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 0 4px;
+}
+
+.meal-empty {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.8125rem;
+  color: #3a3a5c;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.food-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  transition: background 0.15s;
+}
+
+.food-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+.food-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.food-name {
+  display: block;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #f0f0f5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.food-macros {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  color: #7070a0;
+  margin-top: 1px;
+}
+
+.food-kcal {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8125rem;
+  color: #f0f0f5;
+  flex-shrink: 0;
+}
+
+.food-remove {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  color: #3a3a5c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.food-remove:hover {
+  color: #ff3355;
+  background: rgba(255, 51, 85, 0.1);
+}
+
+.add-food-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - 32px);
+  margin: 6px 16px 10px;
+  padding: 9px;
+  background: rgba(200, 255, 0, 0.06);
+  border: 1px dashed rgba(200, 255, 0, 0.25);
+  border-radius: 10px;
+  color: #c8ff00;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.add-food-btn:hover { background: rgba(200, 255, 0, 0.1); }
+
+/* Food picker overlay */
+.food-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-end;
+  z-index: 50;
+}
+
+.food-sheet {
+  width: 100%;
+  max-height: 72%;
+  background: #13131c;
+  border-radius: 24px 24px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.food-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 10px;
+  flex-shrink: 0;
+}
+
+.food-sheet-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #f0f0f5;
+}
+
+.sheet-close {
+  background: none;
+  border: none;
+  color: #7070a0;
+  cursor: pointer;
+  display: flex;
+  transition: color 0.2s;
+}
+
+.sheet-close:hover { color: #f0f0f5; }
+
+.food-search {
+  margin: 0 16px 10px;
+  padding: 11px 14px;
+  background: #1e1e2e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #f0f0f5;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+
+.food-search:focus { border-color: rgba(200, 255, 0, 0.35); }
+.food-search::placeholder { color: #3a3a5c; }
+
+.food-db-list {
+  overflow-y: auto;
+  scrollbar-width: none;
+  flex: 1;
+  padding-bottom: 16px;
+}
+
+.food-db-list::-webkit-scrollbar { display: none; }
+
+.food-db-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  gap: 12px;
+}
+
+.food-db-item:hover { background: rgba(255, 255, 255, 0.04); }
+
+.food-db-info { flex: 1; min-width: 0; }
+
+.food-db-name {
+  display: block;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #f0f0f5;
+}
+
+.food-db-macros {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  color: #7070a0;
+  margin-top: 2px;
+}
+
+.food-db-right {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.food-db-kcal {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #c8ff00;
+}
+
+.food-db-unit {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.72rem;
+  color: #7070a0;
+}

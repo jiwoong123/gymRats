@@ -1,0 +1,203 @@
+.menu-page {
+  padding: 52px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Profile card */
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(200, 255, 0, 0.1);
+  border: 1px solid rgba(200, 255, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c8ff00;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f0f0f5;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.profile-email {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.8125rem;
+  color: #7070a0;
+}
+
+.profile-since {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.75rem;
+  color: #c8ff00;
+  margin-top: 3px;
+}
+
+.profile-edit {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #f0f0f5;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-edit:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* Achievements */
+.achievements {
+  display: flex;
+  gap: 8px;
+}
+
+.achievement-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.ach-emoji {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ach-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #f0f0f5;
+  line-height: 1.2;
+}
+
+.ach-sub {
+  font-family: "Barlow", sans-serif;
+  font-size: 0.68rem;
+  color: #7070a0;
+}
+
+/* Menu sections */
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-section-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7070a0;
+  padding-left: 4px;
+}
+
+.menu-items {
+  background: #13131c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: rgba(255, 255, 255, 0.03); }
+
+.menu-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-item-label {
+  flex: 1;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #f0f0f5;
+}
+
+.menu-item-arrow {
+  color: #3a3a5c;
+}
+
+/* Logout */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 51, 85, 0.08);
+  border: 1px solid rgba(255, 51, 85, 0.2);
+  border-radius: 14px;
+  color: #ff3355;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover { background: rgba(255, 51, 85, 0.14); }
+
+.version-text {
+  text-align: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  color: #3a3a5c;
+}

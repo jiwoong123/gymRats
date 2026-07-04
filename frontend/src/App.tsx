@@ -4,11 +4,14 @@ import ProtectedRoute from "./ProtectedRoutes";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import Menu from "./pages/Menu"
-import Home from "./pages/Home";
-import Records from "./pages/Records";
+import Home from "./pages/home/Home";
+import Workouts from "./pages/records/Workouts";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import Body from "./pages/records/Body";
+import MenuHome from "./pages/menu/Menuhome";
+import Root from "./pages/root";
+import Diet from "./pages/diet/Diet";
 
 function App() {
     return (
@@ -20,9 +23,12 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/records" element={<Records />} />
+        <Route path="/" element={<Root />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/menu" element={<MenuHome />} />
+        <Route path="/diet" element={<Diet />} />
+        <Route path="/records/workouts" element={<Workouts />} />
+        <Route path="/records/body" element={<Body />} />
       </Route>
 
       <Route element={<AuthLayout />}>
