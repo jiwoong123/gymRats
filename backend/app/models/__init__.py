@@ -7,3 +7,6 @@ from .personalRecord import PersonalRecord
 # from .workoutExercise import WorkoutExercise
 # from .workoutSession import WorkoutSession
 # from .workoutSet import WorkoutSet
+
+# uv run alembic revision --autogenerate -m "commit memo"
+# uv run alembic upgrade head

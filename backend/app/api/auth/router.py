@@ -9,10 +9,7 @@ from app.api.auth.services.login import login
 from app.api.auth.services.signup import signup
 from app.db.dependencies import get_db
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["Auth"],
-)
+router = APIRouter()
 
 
 @router.post(

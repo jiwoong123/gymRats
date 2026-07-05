@@ -1,5 +1,3 @@
-import datetime
-
 from sqlalchemy.orm import Session
 
 from app.api.auth.repository import AuthRepository
@@ -18,7 +16,7 @@ def signup(
         request.email,
     ):
         raise ValueError("Email already exists")
-
+    
     user = User(
         email=request.email,
         password_hash=hash_password(request.password),

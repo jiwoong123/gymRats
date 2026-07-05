@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from sqlalchemy import String
+from sqlalchemy import String, Identity
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -10,8 +10,8 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(
+        Identity(start=1),
         primary_key=True,
-        autoincrement=True,
     )
 
     email: Mapped[str] = mapped_column(
@@ -21,11 +21,6 @@ class User(Base):
         index=True,
     )
 
-    salt: Mapped[str] = mapped_column(
-        String(10),
-        nullable=False,
-    )
-
     password_hash: Mapped[str] = mapped_column(
         String(500),
         nullable=False,
@@ -33,7 +28,6 @@ class User(Base):
 
     nickname: Mapped[str] = mapped_column(
         String(20),
-        unique=True,
         nullable=False,
         index=True,
     )
@@ -44,7 +38,7 @@ class User(Base):
     # )
 
     gender: Mapped[int]
-    
+
     birth: Mapped[datetime.date]
 
     height: Mapped[float | None]

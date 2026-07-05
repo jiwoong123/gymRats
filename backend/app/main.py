@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 
-app.include_router(auth_router, prefix="/api/test", tags=["Test"])
+app.include_router(test_router, prefix="/api/test", tags=["Test"])
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 # app.include_router(user_router, prefix="/api/users", tags=["Users"])
 # app.include_router(workout_router, prefix="/api/workouts", tags=["Workouts"])
