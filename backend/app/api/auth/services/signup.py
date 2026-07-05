@@ -1,10 +1,11 @@
-from fastapi import HTTPException
+import datetime
+
 from sqlalchemy.orm import Session
 
 from app.api.auth.repository import AuthRepository
 from app.api.auth.schema import SignupRequest
-from app.core.security import hash_password
-from app.models.users import User
+from app.core.security.password import hash_password
+from app.models.user import User
 
 
 def signup(
@@ -12,24 +13,22 @@ def signup(
     request: SignupRequest,
 ):
 
-    user = AuthRepository.get_by_email(
+    if AuthRepository.get_user_by_email(
         db,
         request.email,
-    )
+    ):
+        raise ValueError("Email already exists")
 
-    if user:
-        raise HTTPException(
-            status_code=409,
-            detail="이미 존재하는 이메일입니다.",
-        )
-
-    new_user = User(
+    user = User(
         email=request.email,
         password_hash=hash_password(request.password),
         nickname=request.nickname,
+        gender=request.gender,
+        birth=request.birth,
+        height=request.height,
     )
 
-    AuthRepository.create(
+    return AuthRepository.create_user(
         db,
-        new_user,
+        user,
     )

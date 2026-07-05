@@ -1,10 +1,19 @@
-from pydantic import BaseModel, EmailStr, Field
+from datetime import date
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class SignupRequest(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8, max_length=30)
-    nick_name: str = Field(min_length=5, max_length=20)
+    password: str = Field(min_length=8, max_length=100)
+
+    nickname: str = Field(max_length=20)
+
+    gender: int
+
+    birth: date
+
+    height: float
 
 
 class LoginRequest(BaseModel):
@@ -12,16 +21,17 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class RefreshRequest(BaseModel):
-    {}
-
-
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    refresh_token: str
+    token_type: str = "Bearer"
 
 
 class UserResponse(BaseModel):
     id: int
-    email: EmailStr
+
+    email: str
+
     nickname: str
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,14 +1,12 @@
-import oracledb
+import oracledb, datetime
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import DeclarativeBase, sessionmaker, Mapped, mapped_column
 
 from app.core.config import settings
 
-
+# Oracle Connection Pool
 pool = oracledb.create_pool(
-    config_dir=settings.WALLET_LOCATION,
     user=settings.DB_USER,
     password=settings.DB_PASSWORD,
     dsn=settings.CONNECT_STRING,
@@ -21,16 +19,25 @@ pool = oracledb.create_pool(
 
 engine = create_engine(
     "oracle+oracledb://",
-    creator=lambda: pool.acquire(),
+    creator=pool.acquire,
     echo=True,
+    # echo False,
 )
 
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
     autocommit=False,
+    expire_on_commit=False,
 )
 
 
 class Base(DeclarativeBase):
-    pass
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(),
+    )
+
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
