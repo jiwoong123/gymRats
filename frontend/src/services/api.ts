@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: "https://improved-space-parakeet-wp56w9r97r2v66g-8000.app.github.dev",
 });
 
 api.interceptors.request.use((config) => {
@@ -31,7 +31,7 @@ api.interceptors.response.use(
                     localStorage.getItem("refresh_token");
 
                 const response = await axios.post(
-                    "http://localhost:8000/auth/refresh",
+                    "https://improved-space-parakeet-wp56w9r97r2v66g-8000.app.github.dev/api/auth/refresh",
                     {
                         refresh_token: refreshToken,
                     }

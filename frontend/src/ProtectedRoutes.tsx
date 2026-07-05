@@ -5,11 +5,11 @@ function ProtectedRoute({
 }: {
     children: React.ReactNode;
 }) {
-    // const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-    // if (true) {
-    //     return <Navigate to="/login" replace />;
-    // }
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
 
     return children;
 }
