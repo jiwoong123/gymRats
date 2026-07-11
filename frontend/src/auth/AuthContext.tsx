@@ -54,6 +54,7 @@ export function AuthProvider({
                 tokenStorage.setTokens(response.access_token, response.refresh_token);
 
             } finally {
+                setIsAuthenticated(true);
                 setIsLoading(false);
             }
         };

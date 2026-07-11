@@ -35,6 +35,7 @@ export default function Login() {
       }
     } finally {
       navigate("/", { replace: true });
+
     }
   }
 
