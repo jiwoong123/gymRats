@@ -12,6 +12,7 @@ import {
   Dumbbell,
 } from "lucide-react";
 import "./Menuhome.css";
+import { useAuth } from "../../hooks/useAuth";
 
 const MENU_SECTIONS = [
   {
@@ -46,9 +47,15 @@ const ACHIEVEMENTS = [
 
 export default function MenuHome() {
   const navigate = useNavigate();
+  const {isLoading, logout} = useAuth();
 
-  function handleLogout() {
-    navigate("/login");
+  
+  async function handleLogout() {
+    if (isLoading) return;
+    try{
+      logout();
+    } finally{
+    navigate("/login", { replace: true });}
   }
 
   return (

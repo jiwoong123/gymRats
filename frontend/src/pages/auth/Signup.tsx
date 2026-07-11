@@ -2,23 +2,27 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { ChevronLeft, Eye, EyeOff, ArrowRight } from "lucide-react";
 import "./Signup.css";
+import { signup } from "../../api/authApi";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [form, setForm] = useState({ nickname: "", email: "", password: "", birth: "", height: "", gender: 0, confirm: "" });
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function set(field: string) {
+
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm((f) => ({ ...f, [field]: e.target.value }));
       setError("");
     };
   }
 
-  function handleSubmit(e: React.SubmitEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    if (loading) return;
     e.preventDefault();
-    if (!form.name || !form.email || !form.password || !form.confirm) {
+    if (!form.nickname || !form.email || !form.password || !form.confirm) {
       setError("모든 항목을 입력해주세요.");
       return;
     }
@@ -30,7 +34,29 @@ export default function Signup() {
       setError("비밀번호는 6자 이상이어야 합니다.");
       return;
     }
-    navigate("/");
+    try {
+          setLoading(true);
+    
+          await signup({
+            nickname: form.nickname,
+            email: form.email,
+            password: form.password,
+            gender: form.gender,
+            birth: form.birth,
+            height: Number(form.height),
+          });
+    
+          navigate("/", { replace: true });
+    
+        } catch (err: any) {
+          if (err.response?.status === 401) {
+            setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+          } else {
+            setError("로그인 중 오류가 발생했습니다.");
+          }
+        } finally {
+          setLoading(false);
+        }
   }
 
   return (
@@ -47,8 +73,11 @@ export default function Signup() {
 
       <form className="signup-form" onSubmit={handleSubmit}>
         {[
-          { field: "name", label: "이름", type: "text", placeholder: "홍길동" },
+          { field: "nickname", label: "이름", type: "text", placeholder: "홍길동" },
           { field: "email", label: "이메일", type: "email", placeholder: "name@example.com" },
+          { field: "height", label: "키", type: "number", placeholder: "000.0" },
+          { field: "gender", label: "성별", type: "number", placeholder: "000.0" },
+          { field: "birth", label: "생일", type: "datetime.date",placeholder: "000.0" },
         ].map(({ field, label, type, placeholder }) => (
           <div className="form-group" key={field}>
             <label className="form-label">{label}</label>

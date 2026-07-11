@@ -1,6 +1,7 @@
 from .user import User
 from .exercise import Exercise
 from .personalRecord import PersonalRecord
+from .refreshToken import RefreshToken
 
 # from .routine import Routine
 # from .routineExercise import RoutineExercise

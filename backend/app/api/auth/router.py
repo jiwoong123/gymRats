@@ -7,6 +7,9 @@ from sqlalchemy.orm import Session
 from app.api.auth.schema import *
 from app.api.auth.services.login import login
 from app.api.auth.services.signup import signup
+from app.api.auth.services.logout import logout
+from app.api.auth.services.refresh import refresh
+
 from app.db.dependencies import get_db
 
 router = APIRouter()
@@ -58,3 +61,40 @@ def login_api(
             status_code=401,
             detail=str(e),
         )
+    
+
+
+@router.post("/refresh")
+def refresh_api(
+    request: RefreshRequest,
+    db: Session = Depends(get_db),
+):
+
+    try:
+
+        return refresh(
+            db,
+            request,
+        )
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=401,
+            detail=str(e),
+        )
+
+@router.post("/logout")
+def logout_api(
+    request: LogoutRequest,
+    db: Session = Depends(get_db),
+):
+
+    logout(
+        db,
+        request,
+    )
+
+    return {
+        "message": "Logout success"
+    }
