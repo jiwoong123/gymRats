@@ -12,6 +12,7 @@ import Body from "./pages/records/Body";
 import MenuHome from "./pages/menu/Menuhome";
 import Root from "./pages/root";
 import Diet from "./pages/diet/Diet";
+import GuestRoute from "./auth/GuestRoutes";
 
 function App() {
     return (
@@ -31,7 +32,7 @@ function App() {
         <Route path="/records/body" element={<Body />} />
       </Route>
 
-      <Route element={<AuthLayout />}>
+      <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Route>

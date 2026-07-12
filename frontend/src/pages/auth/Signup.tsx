@@ -2,14 +2,15 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { ChevronLeft, Eye, EyeOff, ArrowRight } from "lucide-react";
 import "./Signup.css";
-import { signup } from "../../api/authApi";
+import { getErrorMessage } from "../../utils/apiError";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ nickname: "", email: "", password: "", birth: "", height: "", gender: 0, confirm: "" });
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const {isLoading, signup} = useAuth();
 
   function set(field: string) {
 
@@ -20,7 +21,7 @@ export default function Signup() {
   }
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    if (loading) return;
+    if (isLoading) return;
     e.preventDefault();
     if (!form.nickname || !form.email || !form.password || !form.confirm) {
       setError("모든 항목을 입력해주세요.");
@@ -35,12 +36,11 @@ export default function Signup() {
       return;
     }
     try {
-          setLoading(true);
-    
+          
           await signup({
-            nickname: form.nickname,
-            email: form.email,
+            email:form.email,
             password: form.password,
+            nickname: form.nickname,
             gender: form.gender,
             birth: form.birth,
             height: Number(form.height),
@@ -48,14 +48,8 @@ export default function Signup() {
     
           navigate("/", { replace: true });
     
-        } catch (err: any) {
-          if (err.response?.status === 401) {
-            setError("이메일 또는 비밀번호가 올바르지 않습니다.");
-          } else {
-            setError("로그인 중 오류가 발생했습니다.");
-          }
-        } finally {
-          setLoading(false);
+        } catch (err) {
+            setError(getErrorMessage(error));
         }
   }
 

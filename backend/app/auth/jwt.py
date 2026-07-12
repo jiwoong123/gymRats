@@ -4,6 +4,10 @@ import hashlib
 import jwt
 from jwt import ExpiredSignatureError, InvalidTokenError
 
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+
+from jose import JWTError, jwt
 from app.core.config import settings
 
 ALGORITHM = "HS256"
@@ -57,3 +61,23 @@ def hash_refresh_token(token: str) -> str:
     return hashlib.sha256(
         token.encode()
     ).hexdigest()
+
+
+def get_current_user_id(
+    token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/auth/login")),
+) -> int:
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.JWT_SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
+
+        return int(payload["sub"])
+
+    except JWTError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token",
+        )

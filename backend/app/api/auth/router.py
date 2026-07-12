@@ -47,6 +47,7 @@ def login_api(
     request: LoginRequest,
     db: Session = Depends(get_db),
 ):
+    print("login")
 
     try:
 
@@ -64,7 +65,7 @@ def login_api(
     
 
 
-@router.post("/refresh")
+@router.post("/refresh", response_model=TokenResponse,)
 def refresh_api(
     request: RefreshRequest,
     db: Session = Depends(get_db),

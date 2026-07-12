@@ -7,22 +7,24 @@ import {
 import * as authApi from "../api/authApi";
 import { tokenStorage } from "./token";
 
+export interface User {
+  id: number;
+  email: string;
+  nickname: string;
+  gender: number;
+  birth: string;
+  height: number;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (
-    accessToken: string,
-    refreshToken: string
-  ) => Promise<void>;
+  user:User | null;
+  login: (data:authApi.LoginRequest)=> Promise<void>;
 
   logout: () => Promise<void>;
-  signup: (
-    email: string,
-    password: string,
-    nickname: string,
-    gender: number,
-    birth: string, // YYYY-MM-DD
-    height: number,) => Promise<void>
+  signup: (data:authApi.SignupRequest) => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 
@@ -35,26 +37,47 @@ export function AuthProvider({
   children: React.ReactNode;
 }) {
     const [isAuthenticated, setIsAuthenticated] =useState(false);
-    const [isLoading, setIsLoading] =useState(false);
+    const [isLoading, setIsLoading] =useState(true);
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        setIsAuthenticated(
-            tokenStorage.isAuthenticated()
-        );
-    }, []);
+        async function initialize() {
 
-    const login = async(
-        email:string,
-        password: string,
-        ) => {
+            if (!tokenStorage.isAuthenticated()) {
+                setIsLoading(false);
+            return;
+            }
+
             try {
                 setIsLoading(true);
-                const response = await authApi.login({email, password,});
+                const me = await authApi.getMe();
+                setUser(me);
+                setIsAuthenticated(true);
+            } catch {
+                tokenStorage.clear();
+                setUser(null);
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        initialize();
+
+        }, []);
+
+    const login = async(data: authApi.LoginRequest) => {
+            try {
+                setIsLoading(true);
+                const response = await authApi.login(data);
                 
                 tokenStorage.setTokens(response.access_token, response.refresh_token);
 
-            } finally {
+                const me = await authApi.getMe();
+                setUser(me);
                 setIsAuthenticated(true);
+
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -70,42 +93,34 @@ export function AuthProvider({
             }
 
         } finally {
-            setIsLoading(false);
             tokenStorage.clear();
-
+            setUser(null);
             setIsAuthenticated(false);
+            setIsLoading(false);
         }
     };
-    const signup = async( 
-        email: string,
-        password: string,
-        nickname: string,
-        gender: number,
-        birth: string, // YYYY-MM-DD
-        height: number,
-        ) => {
+    const signup = async(data:authApi.SignupRequest) => {
             try{
             setIsLoading(true);
-            await authApi.signup({
-                email,
-                password,
-                nickname,
-                gender,
-                birth,
-                height: Number(height),
-                });
+            await authApi.signup(data);
             } finally {
                     setIsLoading(false);
                 }
             }
+    const refreshUser = async () => {
+        const me = await authApi.getMe();
+        setUser(me);
+    }
     return (
     <AuthContext.Provider
         value={{
         isAuthenticated,
         isLoading,
+        user,
         login,
         logout,
-        signup
+        signup,
+        refreshUser
         }}
     >
         {children}

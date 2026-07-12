@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
 
-from app.api.auth.repository import AuthRepository
+from app.db.userRepository import userRepository
+from app.db.refreshTokenRepository import refreshTokenRepository
 from app.api.auth.schema import (
     RefreshRequest,
     TokenResponse,
 )
 
-from app.core.security.jwt import (
+from app.auth.jwt import (
     decode_token,
     create_access_token,
     create_refresh_token,
@@ -28,7 +29,7 @@ def refresh(
 
     user_id = int(payload["sub"])
 
-    user = AuthRepository.get_user_by_id(
+    user = userRepository.get_user_by_id(
         db,
         user_id,
     )
@@ -36,19 +37,19 @@ def refresh(
     if user is None:
         raise ValueError("User not found")
     hashed_token = hash_refresh_token(request.refresh_token)
-    saved = AuthRepository.get_refresh_token(hashed_token)
+    saved = refreshTokenRepository.get_refresh_token(hashed_token)
 
     if saved is None:
         raise ValueError("Invalid refresh token")
     
-    AuthRepository.delete_refresh_token(
+    refreshTokenRepository.delete_refresh_token(
         db,
         saved,
     )
     refresh_token, expires_at = create_refresh_token(user.id)
     access_token = create_access_token(user.id)
 
-    AuthRepository.save_refresh_token(
+    refreshTokenRepository.save_refresh_token(
         db,
         RefreshToken(
             user_id=user_id,

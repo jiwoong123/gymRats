@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from app.api.auth.repository import AuthRepository
+from app.db.userRepository import userRepository
 from app.api.auth.schema import SignupRequest
-from app.core.security.password import hash_password
+from app.auth.password import hash_password
 from app.models.user import User
 
 
@@ -11,7 +11,7 @@ def signup(
     request: SignupRequest,
 ):
 
-    if AuthRepository.get_user_by_email(
+    if userRepository.get_user_by_email(
         db,
         request.email,
     ):
@@ -26,7 +26,7 @@ def signup(
         height=request.height,
     )
 
-    return AuthRepository.create_user(
+    return userRepository.create_user(
         db,
         user,
     )

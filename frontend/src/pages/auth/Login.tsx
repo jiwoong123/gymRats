@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router";
 import { Dumbbell, Eye, EyeOff, ArrowRight } from "lucide-react";
 import "./Login.css";
 import { useAuth } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../utils/apiError";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,15 +27,11 @@ export default function Login() {
     }
 
     try {
-      login(email, password);
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
-      } else {
-        setError("로그인 중 오류가 발생했습니다.");
-      }
+      await login({email: email, password: password});
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
-      navigate("/", { replace: true });
+      navigate("/home", { replace: true });
 
     }
   }
