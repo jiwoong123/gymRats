@@ -19,10 +19,11 @@ class WorkoutSession(Base):
 
     ended_at: Mapped[datetime.datetime | None]
 
+    duration_seconds: Mapped[int]
+
+    total_volume_kg: Mapped[float]
+
     memo: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,
     )
-    created_at: Mapped[datetime.datetime]
-
-    updated_at: Mapped[datetime.datetime]

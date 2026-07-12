@@ -1,5 +1,3 @@
-import datetime
-
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -16,6 +14,14 @@ class WorkoutExercise(Base):
 
     exercise_id: Mapped[int]
 
+    exercise_name_eng_snapshot: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
+    exercise_name_kr_snapshot: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+    )
     exercise_order: Mapped[int]
 
     rest_seconds: Mapped[int]
@@ -24,7 +30,4 @@ class WorkoutExercise(Base):
         String(100),
         nullable=True,
     )
-    created_at: Mapped[datetime.datetime]
-
-    updated_at: Mapped[datetime.datetime]
 

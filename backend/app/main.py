@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth.router import router as auth_router
-from app.api.test.router import router as test_router
 from app.api.user.router import router as user_router
 
 # from app.workouts.router import router as workout_router
@@ -22,7 +21,6 @@ app.add_middleware(
 )
 
 
-app.include_router(test_router, prefix="/api/test", tags=["Test"])
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(user_router, prefix="/api/users",tags=["Users"],
 )

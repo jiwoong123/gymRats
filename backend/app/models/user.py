@@ -21,7 +21,7 @@ class User(Base):
         index=True,
     )
 
-    password_hash: Mapped[str] = mapped_column(
+    password_hashed: Mapped[str] = mapped_column(
         String(500),
         nullable=False,
     )
@@ -42,7 +42,7 @@ class User(Base):
     birth: Mapped[datetime.date]
 
     height: Mapped[float | None]
-
+       
     personal_records: Mapped[List["PersonalRecord"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",

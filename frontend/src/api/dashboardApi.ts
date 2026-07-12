@@ -1,12 +1,7 @@
 import api from "./axios";
 
 export interface HomeResponse {
-
-  user: {
-    nickname: string;
-    streak: number;
-  };
-
+  
   weekly_summary: {
     workout_days: number;
     volume: number;

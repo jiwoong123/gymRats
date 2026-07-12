@@ -9,20 +9,20 @@ from app.api.user.schema import *
 from app.db.dependencies import get_db
 from app.auth.jwt import get_current_user_id
 
-from app.api.user.services.getMe import getMe
-
+from app.api.dashboard.schema import DashboardHomeResponse
+from app.api.dashboard.services.getDashboardHome import get_dashboard_home
 router = APIRouter()
 
 @router.get(
-    "/me",
-    response_model=UserMeResponse,
+    "/home",
+    response_model=DashboardHomeResponse,
 )
-def getMeApi(
+def getDashboardHomeApi(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
     try:
-        return getMe(
+        return get_dashboard_home(
             db,
             user_id,
         )

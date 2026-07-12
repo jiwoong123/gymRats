@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { Flame, Dumbbell, ChevronRight, Plus, Zap, Trophy } from "lucide-react";
 import "./Home.css";
+import { useAuth } from "../../hooks/useAuth";
 
 const RECENT_WORKOUTS = [
   { date: "어제", name: "가슴 · 삼두", duration: 58, volume: 5400 },
@@ -20,6 +21,7 @@ export default function Home() {
   const today = new Date();
   const hour = today.getHours();
   const greeting = hour < 12 ? "좋은 아침이에요" : hour < 18 ? "안녕하세요" : "오늘도 수고했어요";
+  const {user} = useAuth();
 
   return (
     <div className="home-page">
@@ -27,7 +29,7 @@ export default function Home() {
       <div className="home-header">
         <div>
           <p className="home-greeting">{greeting} 👋</p>
-          <h1 className="home-name">김민준<span>님</span></h1>
+          <h1 className="home-name">{user?.nickname}<span>님</span></h1>
         </div>
         <div className="streak-badge">
           <Flame size={16} className="streak-fire" />

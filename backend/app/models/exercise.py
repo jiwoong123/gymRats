@@ -11,11 +11,13 @@ class Exercise(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    category: Mapped[int]
+    category_code: Mapped[int]
 
-    equipment: Mapped[int]
+    equipment_code: Mapped[int]
 
-    body_part: Mapped[int]
+    body_part_code: Mapped[int]
+
+    sub_body_part_code: Mapped[int| None]
     
     name_eng: Mapped[str] = mapped_column(
         String(100),

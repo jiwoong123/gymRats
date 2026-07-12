@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.refreshToken import RefreshToken
 
 
-class refreshTokenRepository:
+class RefreshTokenRepository:
 
     @staticmethod
     def save_refresh_token(

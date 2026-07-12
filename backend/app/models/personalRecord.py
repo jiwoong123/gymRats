@@ -1,3 +1,4 @@
+import datetime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -26,6 +27,8 @@ class PersonalRecord(Base):
     estimated_1rm: Mapped[float | None]
 
     max_reps: Mapped[int | None]
+
+    achieved_at: Mapped[datetime.date]
 
     user: Mapped["User"] = relationship(
         back_populates="personal_records",

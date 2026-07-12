@@ -2,20 +2,22 @@ import { useNavigate } from "react-router";
 import { Flame, Dumbbell, ChevronRight, Plus, Zap, Trophy } from "lucide-react";
 import "./Home.css";
 import { useDashboard } from "../../hooks/useDashboard";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Home() {
   const navigate = useNavigate();
   const today = new Date();
   const hour = today.getHours();
   const greeting = hour < 12 ? "좋은 아침이에요" : hour < 18 ? "안녕하세요" : "오늘도 수고했어요";
-  const {isLoading, error, data} = useDashboard();
+  const {user} = useAuth();
+
   return (
     <div className="home-page">
       {/* Header */}
       <div className="home-header">
         <div>
           <p className="home-greeting">{greeting} 👋</p>
-          <h1 className="home-name">김민준<span>님</span></h1>
+          <h1 className="home-name">{user?.nickname}<span>님</span></h1>
         </div>
         <div className="streak-badge">
           <Flame size={16} className="streak-fire" />
@@ -25,41 +27,7 @@ export default function Home() {
       </div>
 
       {/* Weekly summary */}
-      <div className="weekly-card">
-        <div className="weekly-top">
-          <span className="section-label">이번 주</span>
-          <ChevronRight size={14} style={{ color: "#7070a0" }} />
-        </div>
-        <div className="weekly-stats">
-          {[
-            { label: "운동", value: "4", unit: "일" },
-            { label: "볼륨", value: "23.1", unit: "T" },
-            { label: "세트", value: "86", unit: "세트" },
-          ].map((s) => (
-            <div key={s.label} className="weekly-stat">
-              <span className="weekly-stat-value">{s.value}<span className="weekly-stat-unit">{s.unit}</span></span>
-              <span className="weekly-stat-label">{s.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="weekly-bars">
-          {["월", "화", "수", "목", "금", "토", "일"].map((day, i) => {
-            const heights = [70, 0, 90, 50, 100, 0, 0];
-            return (
-              <div key={day} className="weekly-bar-wrap">
-                <div className="weekly-bar-bg">
-                  <div
-                    className="weekly-bar-fill"
-                    style={{ height: `${heights[i]}%`, opacity: heights[i] === 0 ? 0.15 : 1 }}
-                  />
-                </div>
-                <span className="weekly-bar-day">{day}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
+      
       {/* Quick start */}
       <div className="section">
         <div className="section-header">
