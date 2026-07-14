@@ -16,11 +16,10 @@ def seed_workouts(
     exercises,
 ):
 
+    # (user_id, exercise_id, record_type) -> 최고 기록
+    best_records = {}
+
     for user in users:
-        max_pr = {} # {(exercise.id, recordtype) : max_pr}
-        for exercise in exercises:
-            for i in RecordType:
-                max_pr[(exercise.id, i)]=0
 
         for day in range(20):
 
@@ -49,46 +48,12 @@ def seed_workouts(
                 db.flush()
 
                 for set_number in range(1, 5):
-                    prs = []
+
                     weight = random.randint(60, 140)
                     reps = random.randint(6, 12)
                     volume = weight * reps
                     estimated_1rm = weight * (1 + reps / 30)
                     rpe = round(random.uniform(7.5, 10), 1)
-                    updated = False
-                    if weight>max_pr[(exercise.id, RecordType.weight)]:
-                        updated=True
-                        prs.append(PersonalRecord(
-                                    user_id=user.id,
-                                    exercise_id=exercise.id,
-                                    workout_set_id=0,
-                                    record_type=RecordType.weight,
-                                    value=weight,
-                                    achieved_at=start,
-                                ))
-                        
-                    if volume>max_pr[(exercise.id, RecordType.volume)]:
-                        updated=True
-                        prs.append(PersonalRecord(
-                                    user_id=user.id,
-                                    exercise_id=exercise.id,
-                                    workout_set_id=0,
-                                    record_type=RecordType.volume,
-                                    value=volume,
-                                    achieved_at=start,
-                                ))
-                        
-                    if estimated_1rm>max_pr[(exercise.id, RecordType.estimated_1rm)]:
-                        updated=True
-                        prs.append(PersonalRecord(
-                                    user_id=user.id,
-                                    exercise_id=exercise.id,
-                                    workout_set_id=0,
-                                    record_type=RecordType.estimated_1rm,
-                                    value=estimated_1rm,
-                                    achieved_at=start,
-                                ))
-                        
 
                     workout_set = WorkoutSet(
                         workout_exercise_id=workout.id,
@@ -102,14 +67,46 @@ def seed_workouts(
                         is_drop_set=False,
                         is_super_set=False,
                         completed=True,
-                        is_pr_updated=updated,
+                        is_pr_updated=False,
                     )
+
                     db.add(workout_set)
-                    db.flush()
+                    db.flush()      # workout_set.id 생성
 
-                    for pr in prs:
-                        pr.workout_set_id = workout_set.id
-                        db.add(pr)
-                    db.flush()
+                    updated = False
 
-    db.flush()
+                    candidates = [
+                        (RecordType.weight, weight),
+                        (RecordType.volume, volume),
+                        (RecordType.estimated_1rm, estimated_1rm),
+                    ]
+
+                    for record_type, value in candidates:
+
+                        key = (
+                            user.id,
+                            exercise.id,
+                            record_type,
+                        )
+
+                        previous = best_records.get(key)
+
+                        if previous is None or value > previous:
+
+                            best_records[key] = value
+
+                            db.add(
+                                PersonalRecord(
+                                    user_id=user.id,
+                                    exercise_id=exercise.id,
+                                    workout_set_id=workout_set.id,
+                                    record_type=record_type,
+                                    value=value,
+                                    achieved_at=start,
+                                )
+                            )
+
+                            updated = True
+
+                    workout_set.is_pr_updated = updated
+                    

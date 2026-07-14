@@ -1,4 +1,3 @@
-from typing import List
 from sqlalchemy import String, Text, Identity
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -38,14 +37,14 @@ class Exercise(Base):
         nullable=True,
     )
 
-    personal_records: Mapped[List["PersonalRecord"]] = relationship(
+    personal_records: Mapped[list["PersonalRecord"]] = relationship(
         back_populates="exercise",
     )
 
-    routine_exercises: Mapped[List["RoutineExercise"]] = relationship(
+    routine_exercises: Mapped[list["RoutineExercise"]] = relationship(
         back_populates="exercise"
     )
 
-    workout_exercises: Mapped[List["WorkoutExercise"]] = relationship(
+    workout_exercises: Mapped[list["WorkoutExercise"]] = relationship(
         back_populates="exercise"
     )

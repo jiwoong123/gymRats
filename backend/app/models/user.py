@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 from sqlalchemy import String, Identity
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -43,22 +42,22 @@ class User(Base):
 
     height: Mapped[float | None]
        
-    personal_records: Mapped[List["PersonalRecord"]] = relationship(
+    personal_records: Mapped[list["PersonalRecord"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
 
-    refresh_tokens: Mapped[List["RefreshToken"]] = relationship(
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
     back_populates="user",
     cascade="all, delete-orphan",
     )
 
-    routines: Mapped[List["Routine"]] = relationship(
+    routines: Mapped[list["Routine"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
 
-    workout_sessions:Mapped[List["WorkoutSession"]] = relationship(
+    workout_sessions:Mapped[list["WorkoutSession"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )

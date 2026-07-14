@@ -55,7 +55,7 @@ class WorkoutSet(Base):
         back_populates="sets",
     )
     
-    personal_record:Mapped["PersonalRecord"] = relationship(
+    personal_records:Mapped[list["PersonalRecord"]] = relationship(
         back_populates="workout_set",
         cascade="all, delete-orphan",
     )

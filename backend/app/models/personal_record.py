@@ -55,5 +55,5 @@ class PersonalRecord(Base):
     )
 
     workout_set: Mapped["WorkoutSet"] = relationship(
-        back_populates="personal_record",
+        back_populates="personal_records",
     )

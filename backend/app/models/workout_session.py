@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 from sqlalchemy import Text, Identity, Index, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -50,7 +49,7 @@ class WorkoutSession(Base):
         back_populates="workout_sessions",
     )
 
-    exercises:Mapped[List["WorkoutExercise"]]= relationship(
+    exercises:Mapped[list["WorkoutExercise"]]= relationship(
         back_populates="workout_session",
         cascade="all, delete-orphan",
     )

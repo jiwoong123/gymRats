@@ -1,4 +1,3 @@
-from typing import List
 from sqlalchemy import String, Text, Identity, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,10 +33,10 @@ class Routine(Base):
         back_populates="routines",
     )
 
-    exercises:Mapped[List["RoutineExercise"]] = relationship(
+    exercises:Mapped[list["RoutineExercise"]] = relationship(
         back_populates="routine",
         cascade="all, delete-orphan",
     )
-    workout_sessions: Mapped[List["WorkoutSession"]] = relationship(
+    workout_sessions: Mapped[list["WorkoutSession"]] = relationship(
         back_populates="routine",
     )
