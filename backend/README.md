@@ -1,9 +1,12 @@
-alembic revision -m ""
+alembic revision --autogenerate -m ""
 
 uv sync
 
 cp .env.example .env
 
-uv run alembic upgrade head
+alembic upgrade head
 
-uv run uvicorn app.main:app --reload
+uvicorn app.main:app --reload
+
+초기화
+DROP TABLE routines CASCADE CONSTRAINTS;

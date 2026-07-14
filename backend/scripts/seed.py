@@ -6,7 +6,6 @@ from app.seed.seed_users import seed_users
 from app.seed.seed_exercises import seed_exercises
 from app.seed.seed_routines import seed_routines
 from app.seed.seed_workouts import seed_workouts
-from app.seed.seed_pr import seed_personal_records
 
 
 def main():
@@ -33,13 +32,6 @@ def main():
             db,
             users,
             routines,
-            exercises,
-        )
-
-        print("Seeding personal records...")
-        seed_personal_records(
-            db,
-            users,
             exercises,
         )
 

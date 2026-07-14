@@ -1,8 +1,8 @@
-""".
+"""pr updated type to bool
 
-Revision ID: 7c4601da4359
-Revises: 65cde508f4ad
-Create Date: 2026-07-06 12:20:03.475752
+Revision ID: 879ac87db025
+Revises: 45721cd02730
+Create Date: 2026-07-14 07:16:23.765551
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '7c4601da4359'
-down_revision: Union[str, Sequence[str], None] = '65cde508f4ad'
+revision: str = '879ac87db025'
+down_revision: Union[str, Sequence[str], None] = '45721cd02730'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

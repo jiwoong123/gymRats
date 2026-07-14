@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.db.repositories.userRepository import userRepository
+from app.db.repositories.userRepository import UserRepository
 from app.auth.password import hash_password
 from app.models.user import User
 
@@ -10,7 +10,7 @@ def getMe(
     user_id: int
 ):
 
-    user = userRepository.get_user_by_id(
+    user = UserRepository.get_user_by_id(
         db,
         user_id,
     )

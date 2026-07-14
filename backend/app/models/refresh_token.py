@@ -8,12 +8,12 @@ from app.db.database import Base
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
-    id: Mapped[int] = mapped_column(
+    id:Mapped[int] = mapped_column(
         Identity(),
         primary_key=True,
     )
 
-    user_id: Mapped[int] = mapped_column(
+    user_id = mapped_column(
         ForeignKey("users.id"),
         nullable=False,
         index=True,
@@ -27,7 +27,6 @@ class RefreshToken(Base):
         unique=True,
         index=True,
     )
-
 
     user = relationship(
         "User",

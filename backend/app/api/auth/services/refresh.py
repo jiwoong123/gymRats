@@ -14,7 +14,7 @@ from app.auth.jwt import (
     hash_refresh_token
 )
 
-from app.models.refreshToken import RefreshToken
+from app.models.refresh_token import RefreshToken
 
 
 def refresh(

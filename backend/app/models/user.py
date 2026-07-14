@@ -9,20 +9,20 @@ from app.db.database import Base
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(
-        Identity(start=1),
+    id:Mapped[int] = mapped_column(
+        Identity(),
         primary_key=True,
     )
 
     email: Mapped[str] = mapped_column(
-        String(255),
+        String(320),
         unique=True,
         nullable=False,
         index=True,
     )
 
     password_hashed: Mapped[str] = mapped_column(
-        String(500),
+        String(255),
         nullable=False,
     )
 
@@ -51,4 +51,14 @@ class User(Base):
     refresh_tokens: Mapped[List["RefreshToken"]] = relationship(
     back_populates="user",
     cascade="all, delete-orphan",
+    )
+
+    routines: Mapped[List["Routine"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    workout_sessions:Mapped[List["WorkoutSession"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
     )

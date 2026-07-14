@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.refreshToken import RefreshToken
+from app.models.refresh_token import RefreshToken
 
 
 class RefreshTokenRepository:

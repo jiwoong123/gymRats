@@ -1,4 +1,5 @@
-from sqlalchemy import String, Text
+from typing import List
+from sqlalchemy import String, Text, Identity
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -9,22 +10,22 @@ from app.db.database import Base
 class Exercise(Base):
     __tablename__ = "exercises"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id:Mapped[int] = mapped_column(Identity(),primary_key=True)
 
-    category_code: Mapped[int]
+    category: Mapped[int]
 
-    equipment_code: Mapped[int]
+    equipment: Mapped[int]
 
-    body_part_code: Mapped[int]
+    body_part: Mapped[int]
 
-    sub_body_part_code: Mapped[int| None]
+    sub_body_part: Mapped[int| None]
     
     name_eng: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
     )
     name_kr: Mapped[str] = mapped_column(
-        String(30),
+        String(50),
         nullable=False,
     )
 
@@ -37,6 +38,14 @@ class Exercise(Base):
         nullable=True,
     )
 
-    personal_records: Mapped[list["PersonalRecord"]] = relationship(
+    personal_records: Mapped[List["PersonalRecord"]] = relationship(
         back_populates="exercise",
+    )
+
+    routine_exercises: Mapped[List["RoutineExercise"]] = relationship(
+        back_populates="exercise"
+    )
+
+    workout_exercises: Mapped[List["WorkoutExercise"]] = relationship(
+        back_populates="exercise"
     )

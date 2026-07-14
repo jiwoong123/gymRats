@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 
 
-class RserRepository:
+class UserRepository:
 
     @staticmethod
     def get_user_by_email(

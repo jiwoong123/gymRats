@@ -8,4 +8,5 @@ class Equipment(IntEnum):
     ezbar = 4
     bodyweight = 5
     kettlebell = 6
+    machine = 7
     others = -1
