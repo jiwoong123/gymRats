@@ -38,6 +38,8 @@ class LatestPR(BaseModel):
 class DashboardHomeResponse(BaseModel):
     user: UserSummary
 
+    streak: int
+
     weekly_summary: WeeklySummary
 
     weekly_activity: list[WeeklyActivityItem]

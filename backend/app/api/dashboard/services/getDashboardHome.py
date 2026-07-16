@@ -1,5 +1,4 @@
-from datetime import date
-from datetime import timedelta
+from datetime import date, datetime, time, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -7,8 +6,8 @@ from ..schema import *
 
 from app.db.repositories.userRepository import UserRepository
 from app.db.repositories.workoutRepository import WorkoutRepository
-from app.db.repositories.routine_repository import RoutineRepository
-from app.db.repositories.personal_record_repository import PersonalRecordRepository
+from app.db.repositories.routineRepository import RoutineRepository
+from app.db.repositories.personalRecordRepository import PersonalRecordRepository
 
 
 def get_dashboard_home(
@@ -18,25 +17,29 @@ def get_dashboard_home(
     today = date.today()
 
     monday = today - timedelta(days=today.weekday())
-    sunday = monday + timedelta(days=6)
+    next_monday = monday + timedelta(days=7)
+    week_start = datetime.combine(monday, time.min)
+    week_end = datetime.combine(next_monday, time.min)
 
-    user = UserRepository.get_by_id(
+    user = UserRepository.get_user_by_id(
         db,
         user_id,
     )
+    if user is None:
+        raise ValueError("User not found")
 
     weekly_summary = WorkoutRepository.get_weekly_summary(
         db,
         user_id,
-        monday,
-        sunday,
+        week_start,
+        week_end,
     )
 
     weekly_activity = WorkoutRepository.get_weekly_activity(
         db,
         user_id,
-        monday,
-        sunday,
+        week_start,
+        week_end,
     )
 
     quick_workouts = RoutineRepository.get_recent_routines(
@@ -60,6 +63,8 @@ def get_dashboard_home(
         user=UserSummary(
             nickname=user.nickname,
         ),
+
+        streak=WorkoutRepository.get_streak(db, user_id, today),
 
         weekly_summary=weekly_summary,
 

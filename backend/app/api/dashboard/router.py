@@ -4,8 +4,6 @@ from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
-from app.api.user.schema import *
-
 from app.db.dependencies import get_db
 from app.auth.jwt import get_current_user_id
 
@@ -17,7 +15,7 @@ router = APIRouter()
     "/home",
     response_model=DashboardHomeResponse,
 )
-def getDashboardHomeApi(
+def get_dashboard_home_api(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):

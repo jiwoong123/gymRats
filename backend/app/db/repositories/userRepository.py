@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.models.refresh_token import RefreshToken
 from app.models.user import User
 
 
@@ -34,4 +35,38 @@ class UserRepository:
         db.refresh(user)
 
         return user
-    
+
+    @staticmethod
+    def update_user(
+        db: Session,
+        user: User,
+        values: dict,
+    ) -> User:
+        for field, value in values.items():
+            setattr(user, field, value)
+
+        db.commit()
+        db.refresh(user)
+        return user
+
+    @staticmethod
+    def update_password(
+        db: Session,
+        user: User,
+        password_hashed: str,
+    ) -> None:
+        user.password_hashed = password_hashed
+        (
+            db.query(RefreshToken)
+            .filter(RefreshToken.user_id == user.id)
+            .delete(synchronize_session=False)
+        )
+        db.commit()
+
+    @staticmethod
+    def delete_user(
+        db: Session,
+        user: User,
+    ) -> None:
+        db.delete(user)
+        db.commit()

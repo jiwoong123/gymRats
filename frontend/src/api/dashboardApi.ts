@@ -1,7 +1,12 @@
 import api from "./axios";
 
 export interface HomeResponse {
-  
+  user: {
+    nickname: string;
+  };
+
+  streak: number;
+
   weekly_summary: {
     workout_days: number;
     volume: number;
@@ -33,11 +38,6 @@ export interface HomeResponse {
 }
 
 export async function getHome() {
-
-    const response =
-        await api.get<HomeResponse>(
-            "/dashboard/home"
-        );
-
-    return response.data;
+  const response = await api.get<HomeResponse>("/dashboard/home");
+  return response.data;
 }
