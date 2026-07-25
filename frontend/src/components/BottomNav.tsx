@@ -16,7 +16,7 @@ export default function BottomNav() {
       exact: false,
       active: isRecords,
     },
-    { to: "/diet", icon: <UtensilsCrossed size={22} />, label: "식단", exact: false },
+    // { to: "/diet", icon: <UtensilsCrossed size={22} />, label: "식단", exact: false },
     { to: "/menu", icon: <User size={22} />, label: "메뉴", exact: false },
   ];
 

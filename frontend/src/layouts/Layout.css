@@ -49,6 +49,10 @@
   display: none;
 }
 
+.phone-content.workout-session-content {
+  padding-bottom: 0;
+}
+
 .phone-content-full {
   flex: 1;
   overflow-y: auto;

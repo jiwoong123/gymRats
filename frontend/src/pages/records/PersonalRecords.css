@@ -1,0 +1,142 @@
+.pr-history-page {
+  padding: 20px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pr-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pr-history-header p {
+  margin-bottom: 3px;
+  color: #7070a0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+}
+
+.pr-history-header h1 {
+  color: #f0f0f5;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.pr-history-mark,
+.pr-history-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c8ff00;
+  background: rgba(200, 255, 0, 0.08);
+  border: 1px solid rgba(200, 255, 0, 0.16);
+}
+
+.pr-history-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+}
+
+.pr-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.pr-history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(200, 255, 0, 0.055), #13131c 42%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+}
+
+.pr-history-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.pr-history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pr-history-info h2 {
+  overflow: hidden;
+  color: #f0f0f5;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pr-history-info time {
+  display: block;
+  margin-top: 3px;
+  color: #7070a0;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.72rem;
+}
+
+.pr-history-weight {
+  flex: 0 0 auto;
+  color: #c8ff00;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.pr-history-weight span {
+  margin-left: 2px;
+  color: #7070a0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 0.75rem;
+}
+
+.pr-history-state {
+  min-height: 45vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #7070a0;
+  font-size: 0.8rem;
+}
+
+.pr-history-state button {
+  padding: 8px 12px;
+  color: #c8ff00;
+  background: rgba(200, 255, 0, 0.08);
+  border: 1px solid rgba(200, 255, 0, 0.25);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.pr-history-sentinel {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #7070a0;
+  font-size: 0.72rem;
+}
+
+.pr-history-spin {
+  animation: pr-history-spin 0.8s linear infinite;
+}
+
+@keyframes pr-history-spin {
+  to { transform: rotate(360deg); }
+}

@@ -37,7 +37,7 @@ def refresh(
     if user is None:
         raise ValueError("User not found")
     hashed_token = hash_refresh_token(request.refresh_token)
-    saved = RefreshTokenRepository.get_refresh_token(hashed_token)
+    saved = RefreshTokenRepository.get_refresh_token(db, hashed_token)
 
     if saved is None:
         raise ValueError("Invalid refresh token")
@@ -58,6 +58,6 @@ def refresh(
         )
     )
     return TokenResponse(
-        access_token,
-        refresh_token,
+        access_token=access_token,
+        refresh_token=refresh_token,
     )

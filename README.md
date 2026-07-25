@@ -1,3 +1,2 @@
-# gymRats
+# GymRats
 Gym recording service
-

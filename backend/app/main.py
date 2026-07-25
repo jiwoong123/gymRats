@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth.router import router as auth_router
 from app.api.user.router import router as user_router
 from app.api.dashboard.router import router as dashboard_router
+from app.api.routine.router import router as routine_router
+from app.api.workout.router import router as workout_router
+from app.api.personal_record.router import router as personal_record_router
 
 # from app.workouts.router import router as workout_router
 # from app.users.router import router as user_router
@@ -26,6 +29,9 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
 app.include_router(user_router, prefix="/api/users",tags=["Users"],
 )
 app.include_router(dashboard_router, prefix="/api/dashboard", tags=["Dashboard"])
+app.include_router(routine_router, prefix="/api/routines", tags=["Routines"])
+app.include_router(workout_router, prefix="/api/workout-sessions", tags=["Workout Sessions"])
+app.include_router(personal_record_router, prefix="/api/personal-records", tags=["Personal Records"])
 # app.include_router(user_router, prefix="/api/users", tags=["Users"])
 # app.include_router(workout_router, prefix="/api/workouts", tags=["Workouts"])
 

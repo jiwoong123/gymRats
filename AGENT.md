@@ -14,6 +14,7 @@ This file defines how Codex should work in this repository.
 - Preserve backward compatibility unless explicitly instructed otherwise.
 - Prefer modifying existing code over introducing new dependencies.
 - Explain assumptions when requirements are ambiguous.
+- always consider optimization and choose best performance option.
 
 ---
 

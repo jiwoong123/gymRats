@@ -3,6 +3,7 @@ import {
   useState,
   useEffect,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import * as authApi from "../api/authApi";
 import { tokenStorage } from "./token";
@@ -14,7 +15,7 @@ export interface User {
   gender: number;
   birth: string;
   height: number;
-  streak: number;
+  created_at: string;
 }
 
 interface AuthContextType {
@@ -37,11 +38,22 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+    const queryClient = useQueryClient();
     const [isAuthenticated, setIsAuthenticated] =useState(false);
     const [isLoading, setIsLoading] =useState(true);
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
+        const handleExpiredAuthentication = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            queryClient.clear();
+            setUser(null);
+            setIsAuthenticated(false);
+            setIsLoading(false);
+        };
+        window.addEventListener("auth:expired", handleExpiredAuthentication);
+
         async function initialize() {
 
             if (!tokenStorage.isAuthenticated()) {
@@ -65,22 +77,17 @@ export function AuthProvider({
 
         initialize();
 
-        }, []);
+        return () => window.removeEventListener("auth:expired", handleExpiredAuthentication);
+        }, [queryClient]);
 
     const login = async(data: authApi.LoginRequest) => {
-            try {
-                setIsLoading(true);
-                const response = await authApi.login(data);
-                
-                tokenStorage.setTokens(response.access_token, response.refresh_token);
+            const response = await authApi.login(data);
 
-                const me = await authApi.getMe();
-                setUser(me);
-                setIsAuthenticated(true);
+            tokenStorage.setTokens(response.access_token, response.refresh_token);
 
-            } finally {
-                setIsLoading(false);
-            }
+            const me = await authApi.getMe();
+            setUser(me);
+            setIsAuthenticated(true);
         };
 
     const logout = async () => {
@@ -94,7 +101,9 @@ export function AuthProvider({
             }
 
         } finally {
-            tokenStorage.clear();
+            localStorage.clear();
+            sessionStorage.clear();
+            queryClient.clear();
             setUser(null);
             setIsAuthenticated(false);
             setIsLoading(false);

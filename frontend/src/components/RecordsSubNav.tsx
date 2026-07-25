@@ -6,17 +6,29 @@ export default function RecordsSubNav() {
   return (
     <div className="records-subnav">
       <Link
+        to="/records/weekly-summary"
+        className={"subnav-item" + (loc.pathname === "/records/weekly-summary" ? " active" : "")}
+      >
+        주간 요약
+      </Link>
+      <Link
         to="/records/workouts"
         className={"subnav-item" + (loc.pathname === "/records/workouts" ? " active" : "")}
       >
         운동 기록
       </Link>
       <Link
+        to="/records/personal-records"
+        className={"subnav-item" + (loc.pathname === "/records/personal-records" ? " active" : "")}
+      >
+        신기록
+      </Link>
+      {/* <Link
         to="/records/body"
         className={"subnav-item" + (loc.pathname === "/records/body" ? " active" : "")}
       >
         체성분
-      </Link>
+      </Link> */}
     </div>
   );
 }

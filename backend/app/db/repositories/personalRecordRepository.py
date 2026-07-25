@@ -7,6 +7,26 @@ from app.models.enum.recordType import RecordType
 class PersonalRecordRepository:
 
     @staticmethod
+    def get_pr_history(
+        db: Session,
+        user_id: int,
+        offset: int,
+        limit: int,
+    ) -> list[PersonalRecord]:
+        return (
+            db.query(PersonalRecord)
+            .options(joinedload(PersonalRecord.exercise))
+            .filter(
+                PersonalRecord.user_id == user_id,
+                PersonalRecord.record_type == RecordType.weight,
+            )
+            .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+
+    @staticmethod
     def get_latest_pr(
         db: Session,
         user_id: int,

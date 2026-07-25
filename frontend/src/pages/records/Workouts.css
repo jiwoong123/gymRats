@@ -45,6 +45,12 @@
   gap: 10px;
 }
 
+.history-state { min-height: 45vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #7070a0; font-size: .8rem; }
+.history-state button { padding: 8px 12px; color: #c8ff00; background: rgba(200,255,0,.08); border: 1px solid rgba(200,255,0,.25); border-radius: 9px; cursor: pointer; }
+.history-sentinel { min-height: 32px; display: flex; align-items: center; justify-content: center; gap: 7px; color: #7070a0; font-size: .72rem; }
+.history-spin { animation: history-spin .8s linear infinite; }
+@keyframes history-spin { to { transform: rotate(360deg); } }
+
 .history-item {
   background: #13131c;
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -67,6 +73,94 @@
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
   color: #7070a0;
+}
+
+.history-options {
+  position: relative;
+}
+
+.history-options-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: -6px -6px -6px 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #7070a0;
+  cursor: pointer;
+}
+
+.history-options-btn:hover,
+.history-options-btn[aria-expanded="true"] {
+  color: #f0f0f5;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.history-options-menu {
+  position: absolute;
+  z-index: 2;
+  top: 32px;
+  right: 0;
+  min-width: 96px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: #1e1e2e;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.history-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #ff5570;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.history-delete-btn:hover {
+  background: rgba(255, 51, 85, 0.1);
+}
+
+.history-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.history-delete-error {
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 51, 85, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 51, 85, 0.08);
+  color: #ff5570;
+  font-size: 0.8rem;
+}
+
+.history-delete-blocker {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(10, 10, 15, 0.72);
+  backdrop-filter: blur(2px);
+  color: #f0f0f5;
+  font-family: "Barlow", sans-serif;
+  font-size: 0.85rem;
+  cursor: wait;
 }
 
 .history-duration {

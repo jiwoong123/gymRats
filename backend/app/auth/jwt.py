@@ -1,9 +1,6 @@
 from datetime import datetime, timedelta
 import hashlib
 
-import jwt
-from jwt import ExpiredSignatureError, InvalidTokenError
-
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
@@ -18,7 +15,7 @@ def create_access_token(user_id: int):
     payload = {
         "sub": str(user_id),
         "type": "access",
-        "exp": datetime.now() + timedelta(minutes=30),
+        "exp": datetime.now() + timedelta(minutes=90),
     }
 
     return jwt.encode(
@@ -34,7 +31,7 @@ def create_refresh_token(user_id: int) -> tuple[str, datetime]:
     payload = {
         "sub": str(user_id),
         "type": "refresh",
-        "exp": str(expires_at),
+        "exp": expires_at,
     }
 
     token = jwt.encode(
@@ -51,10 +48,8 @@ def decode_token(token: str) -> dict:
             settings.JWT_SECRET_KEY,
             algorithms=[ALGORITHM],
         )
-    except ExpiredSignatureError:
-        raise ValueError("Token expired")
-    except InvalidTokenError:
-        raise ValueError("Invalid token")
+    except JWTError as error:
+        raise ValueError("Invalid or expired token") from error
     
 
 def hash_refresh_token(token: str) -> str:

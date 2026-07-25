@@ -13,6 +13,10 @@ import MenuHome from "./pages/menu/Menuhome";
 import Root from "./pages/root";
 import Diet from "./pages/diet/Diet";
 import GuestRoute from "./auth/GuestRoutes";
+import NewRoutine from "./pages/routine/NewRoutine";
+import WorkoutSessionPage from "./pages/workoutsession/WorkoutSession";
+import PersonalRecords from "./pages/records/PersonalRecords";
+import WeeklySummary from "./pages/records/WeeklySummary";
 
 function App() {
     return (
@@ -30,6 +34,10 @@ function App() {
         <Route path="/diet" element={<Diet />} />
         <Route path="/records/workouts" element={<Workouts />} />
         <Route path="/records/body" element={<Body />} />
+        <Route path="/records/personal-records" element={<PersonalRecords />} />
+        <Route path="/records/weekly-summary" element={<WeeklySummary />} />
+        <Route path="/routine/new" element={<NewRoutine />} />
+        <Route path="/workout-session" element={<WorkoutSessionPage />} />
       </Route>
 
       <Route element={<GuestRoute><AuthLayout /></GuestRoute>}>

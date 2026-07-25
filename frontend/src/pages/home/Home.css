@@ -99,10 +99,24 @@
 
 /* Weekly card */
 .weekly-card {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   background: #13131c;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 20px;
   padding: 18px;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.weekly-card:hover {
+  background: #171724;
+}
+
+.weekly-card:active {
+  transform: scale(0.99);
 }
 
 .weekly-top {
@@ -385,6 +399,11 @@
 
 /* PR banner */
 .pr-banner {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -392,6 +411,15 @@
   background: linear-gradient(135deg, rgba(200, 255, 0, 0.07), rgba(200, 255, 0, 0.02));
   border: 1px solid rgba(200, 255, 0, 0.18);
   border-radius: 16px;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.pr-banner:hover {
+  background: linear-gradient(135deg, rgba(200, 255, 0, 0.1), rgba(200, 255, 0, 0.035));
+}
+
+.pr-banner:active {
+  transform: scale(0.985);
 }
 
 .pr-label {

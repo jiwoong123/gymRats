@@ -18,7 +18,7 @@ class TokenStorage {
   }
 
   isAuthenticated() {
-    return !!this.getAccessToken();
+    return !!(this.getAccessToken() || this.getRefreshToken());
   }
 }
 

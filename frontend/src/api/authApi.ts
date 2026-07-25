@@ -35,7 +35,7 @@ export async function login(data: LoginRequest) {
 }
 
 export async function refresh(data: RefreshRequest) {
-  const response = await api.post<LoginResponse>("/auth/login", data);
+  const response = await api.post<LoginResponse>("/auth/refresh", data);
 
   return response.data;
 }

@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Text, Identity, Index, ForeignKey
+from sqlalchemy import Text, String, Identity, Index, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -32,6 +32,11 @@ class WorkoutSession(Base):
         index=True,
     )
 
+    name: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+    
     started_at: Mapped[datetime.datetime]
 
     ended_at: Mapped[datetime.datetime | None]

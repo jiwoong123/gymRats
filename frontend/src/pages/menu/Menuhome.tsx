@@ -41,15 +41,41 @@ const MENU_SECTIONS = [
 
 const ACHIEVEMENTS = [
   { emoji: "🔥", label: "12일 연속", sub: "최고 기록!" },
-  { emoji: "💯", label: "100회 운동", sub: "달성" },
   { emoji: "🏆", label: "3개 PR", sub: "이번 달" },
+  // additional achivements
 ];
+
+function formatMembershipDuration(createdAt: string) {
+  const createdDate = new Date(createdAt);
+  if (Number.isNaN(createdDate.getTime())) return "";
+
+  const today = new Date();
+  const createdDay = Date.UTC(
+    createdDate.getFullYear(),
+    createdDate.getMonth(),
+    createdDate.getDate(),
+  );
+  const todayDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const daysSinceJoining = Math.max(
+    1,
+    Math.floor((todayDay - createdDay) / 86_400_000) + 1,
+  );
+  const formattedDate = new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(createdDate)
+    .replaceAll(". ", ".")
+    .replace(/\.$/, "");
+
+  return `${formattedDate} 부터 ${daysSinceJoining}일째 운동 중`;
+}
 
 export default function MenuHome() {
   const navigate = useNavigate();
-  const {isLoading, logout} = useAuth();
+  const {user, isLoading, logout} = useAuth();
 
-  
   async function handleLogout() {
     if (isLoading) return;
     try{
@@ -66,9 +92,11 @@ export default function MenuHome() {
           <User size={30} />
         </div>
         <div className="profile-info">
-          <h2 className="profile-name">김민준</h2>
-          <p className="profile-email">minjun.kim@example.com</p>
-          <p className="profile-since">2025.01.15부터 시작 · 182일</p>
+          <h2 className="profile-name">{user?.nickname}</h2>
+          <p className="profile-email">{user?.email}</p>
+          {user?.created_at && (
+            <p className="profile-since">{formatMembershipDuration(user.created_at)}</p>
+          )}
         </div>
         <button className="profile-edit">편집</button>
       </div>
@@ -108,7 +136,7 @@ export default function MenuHome() {
         로그아웃
       </button>
 
-      <p className="version-text">LiftLog v1.0.0</p>
+      <p className="version-text">GymRats v1.0.0</p>
     </div>
   );
 }

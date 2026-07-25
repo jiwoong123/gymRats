@@ -6,15 +6,16 @@ import "./Layout.css";
 export default function MainLayout() {
   const location = useLocation();
   const isRecords = location.pathname.startsWith("/records");
+  const isWorkoutSession = location.pathname === "/workout-session";
 
   return (
     <div className="phone-shell-bg">
       <div className="phone-shell">
         {isRecords && <RecordsSubNav />}
-        <div className="phone-content">
+        <div className={`phone-content${isWorkoutSession ? " workout-session-content" : ""}`}>
           <Outlet />
         </div>
-        <BottomNav />
+        {!isWorkoutSession && <BottomNav />}
       </div>
     </div>
   );

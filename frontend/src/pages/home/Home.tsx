@@ -81,7 +81,12 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="weekly-card">
+      <button
+        type="button"
+        className="weekly-card"
+        onClick={() => navigate("/records/weekly-summary")}
+        aria-label="이번 주 운동 요약 보기"
+      >
         <div className="weekly-top">
           <span className="section-label">이번 주</span>
           <ChevronRight size={14} style={{ color: "#7070a0" }} />
@@ -112,7 +117,7 @@ export default function Home() {
             );
           })}
         </div>
-      </div>
+      </button>
 
       <div className="section">
         <div className="section-header">
@@ -125,7 +130,7 @@ export default function Home() {
               <button
                 key={workout.routine_id}
                 className="quick-btn"
-                onClick={() => navigate(`/records/workouts?routine_id=${workout.routine_id}`)}
+                onClick={() => navigate(`/workout-session?routine_id=${workout.routine_id}`)}
               >
                 <span className="quick-emoji">{QUICK_EMOJIS[index % QUICK_EMOJIS.length]}</span>
                 <span className="quick-label">{workout.name}</span>
@@ -135,7 +140,7 @@ export default function Home() {
         ) : (
           <p className="home-empty">저장된 루틴이 없어요.</p>
         )}
-        <button className="start-btn" onClick={() => navigate("/records/workouts")}>
+        <button className="start-btn" onClick={() => navigate("/workout-session")}>
           <Plus size={20} />
           빈 운동 시작하기
         </button>
@@ -172,7 +177,12 @@ export default function Home() {
       </div>
 
       {data.latest_pr && (
-        <div className="pr-banner">
+        <button
+          type="button"
+          className="pr-banner"
+          onClick={() => navigate("/records/personal-records")}
+          aria-label="신기록 히스토리 보기"
+        >
           <Trophy size={18} style={{ color: "#c8ff00" }} />
           <div>
             <p className="pr-label">최근 신기록</p>
@@ -181,7 +191,7 @@ export default function Home() {
             </p>
           </div>
           <ChevronRight size={16} style={{ color: "#7070a0" }} />
-        </div>
+        </button>
       )}
     </div>
   );

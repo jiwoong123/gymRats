@@ -19,16 +19,29 @@ class WorkoutRepository:
             db.query(WorkoutSession)
             .options(
                 selectinload(WorkoutSession.exercises)
-                .selectinload(WorkoutExercise.sets)
+                .selectinload(WorkoutExercise.sets),
+                selectinload(WorkoutSession.exercises)
+                .joinedload(WorkoutExercise.exercise),
             )
             .filter(
                 WorkoutSession.user_id == user_id,
+                WorkoutSession.ended_at.is_not(None),
                 WorkoutSession.started_at >= start,
                 WorkoutSession.started_at < end,
             )
             .order_by(WorkoutSession.started_at.asc())
             .all()
         )
+
+    @classmethod
+    def get_sessions_between(
+        cls,
+        db: Session,
+        user_id: int,
+        start: datetime,
+        end: datetime,
+    ) -> list[WorkoutSession]:
+        return cls._sessions_between(db, user_id, start, end)
 
     @staticmethod
     def _session_totals(session: WorkoutSession) -> tuple[int, float]:
@@ -94,7 +107,7 @@ class WorkoutRepository:
                 selectinload(WorkoutSession.exercises)
                 .selectinload(WorkoutExercise.sets),
             )
-            .filter(WorkoutSession.user_id == user_id)
+            .filter(WorkoutSession.user_id == user_id, WorkoutSession.ended_at.is_not(None))
             .order_by(WorkoutSession.started_at.desc())
             .limit(limit)
             .all()
@@ -111,7 +124,7 @@ class WorkoutRepository:
                 )
             recent_workouts.append({
                 "id": session.id,
-                "name": session.routine.name if session.routine else "Free Workout",
+                "name": session.name,
                 "performed_at": session.started_at.date(),
                 "duration": duration,
                 "volume": volume,
@@ -126,7 +139,7 @@ class WorkoutRepository:
     ) -> int:
         started_at_values = (
             db.query(WorkoutSession.started_at)
-            .filter(WorkoutSession.user_id == user_id)
+            .filter(WorkoutSession.user_id == user_id, WorkoutSession.ended_at.is_not(None))
             .order_by(WorkoutSession.started_at.desc())
             .all()
         )
@@ -151,7 +164,7 @@ class WorkoutRepository:
                 selectinload(WorkoutSession.exercises)
                 .selectinload(WorkoutExercise.sets)
             )
-            .filter(WorkoutSession.user_id == user_id)
+            .filter(WorkoutSession.user_id == user_id, WorkoutSession.ended_at.is_not(None))
             .order_by(WorkoutSession.started_at.desc())
         )
         if number is not None:

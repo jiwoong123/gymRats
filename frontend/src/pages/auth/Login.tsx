@@ -15,9 +15,9 @@ export default function Login() {
   const {login, isLoading} = useAuth();
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    if (isLoading) return;
-
     e.preventDefault();
+
+    if (isLoading) return;
 
     setError("");
 
@@ -28,13 +28,10 @@ export default function Login() {
 
     try {
       await login({email: email, password: password});
-    } catch (err) {
-      console.log(err);
-      setError(getErrorMessage(err));
-    } finally {
       navigate("/home", { replace: true });
-
-    }
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } 
   }
 
   return (
@@ -43,7 +40,7 @@ export default function Login() {
         <div className="login-logo">
           <Dumbbell size={32} />
         </div>
-        <h1 className="login-title">LIFT<span>LOG</span></h1>
+        <h1 className="login-title">Gym<span>Rats</span></h1>
         <p className="login-subtitle">당신의 성장을 기록하세요</p>
       </div>
 
@@ -83,9 +80,9 @@ export default function Login() {
           </div>
         </div>
 
-        {error && <p className="form-error">{error}</p>}
+        {error && <p className="form-error" role="alert">{error}</p>}
 
-        <button type="submit" className="btn-primary"  disabled={isLoading}>
+        <button type="submit" className="btn-primary" disabled={isLoading}>
           {isLoading ? "로그인 중..." : "로그인"}
           <ArrowRight size={18} />
         </button>
