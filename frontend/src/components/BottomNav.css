@@ -4,8 +4,8 @@
   display: flex;
   align-items: flex-start;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(10, 10, 15, 0.95);
+  border-top: 1px solid rgb(var(--white-rgb) / 0.07);
+  background: rgb(var(--background-rgb) / 0.95);
   backdrop-filter: blur(12px);
 }
 
@@ -16,16 +16,16 @@
   align-items: center;
   gap: 4px;
   text-decoration: none;
-  color: #7070a0;
+  color: var(--muted-foreground);
   transition: color 0.2s;
 }
 
 .bottom-nav-item.active {
-  color: #c8ff00;
+  color: var(--primary);
 }
 
 .bottom-nav-item:not(.active):hover {
-  color: #a0a0c0;
+  color: var(--text-light-cool);
 }
 
 .bottom-nav-icon {

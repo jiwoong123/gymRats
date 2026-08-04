@@ -43,9 +43,9 @@ const INITIAL_MEALS: Record<Meal, Food[]> = {
 };
 
 const MACRO_COLORS = {
-  protein: "#c8ff00",
-  carb: "#00e5ff",
-  fat: "#ff6b35",
+  protein: "var(--primary)",
+  carb: "var(--chart-2)",
+  fat: "var(--streak)",
 };
 
 export default function Diet() {
@@ -106,9 +106,9 @@ export default function Diet() {
               outerRadius={60}
               startAngle={90}
               endAngle={-270}
-              data={[{ value: kcalPct, fill: "#c8ff00" }]}
+              data={[{ value: kcalPct, fill: "var(--primary)" }]}
             >
-              <RadialBar dataKey="value" cornerRadius={8} background={{ fill: "rgba(255,255,255,0.06)" }} />
+              <RadialBar dataKey="value" cornerRadius={8} background={{ fill: "rgb(var(--white-rgb) / 0.06)" }} />
             </RadialBarChart>
           </ResponsiveContainer>
           <div className="kcal-center">

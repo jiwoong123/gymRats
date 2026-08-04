@@ -7,6 +7,40 @@ from app.models.enum.recordType import RecordType
 class PersonalRecordRepository:
 
     @staticmethod
+    def get_recorded_exercises(
+        db: Session,
+        user_id: int,
+    ) -> list[PersonalRecord]:
+        return (
+            db.query(PersonalRecord)
+            .options(joinedload(PersonalRecord.exercise))
+            .filter(
+                PersonalRecord.user_id == user_id,
+                PersonalRecord.record_type == RecordType.estimated_1rm,
+            )
+            .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
+            .all()
+        )
+
+    @staticmethod
+    def get_exercise_pr_history(
+        db: Session,
+        user_id: int,
+        exercise_id: int,
+    ) -> list[PersonalRecord]:
+        return (
+            db.query(PersonalRecord)
+            .options(joinedload(PersonalRecord.exercise))
+            .filter(
+                PersonalRecord.user_id == user_id,
+                PersonalRecord.exercise_id == exercise_id,
+                PersonalRecord.record_type == RecordType.estimated_1rm,
+            )
+            .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
+            .all()
+        )
+
+    @staticmethod
     def get_pr_history(
         db: Session,
         user_id: int,
@@ -18,7 +52,7 @@ class PersonalRecordRepository:
             .options(joinedload(PersonalRecord.exercise))
             .filter(
                 PersonalRecord.user_id == user_id,
-                PersonalRecord.record_type == RecordType.weight,
+                PersonalRecord.record_type == RecordType.estimated_1rm,
             )
             .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
             .offset(offset)
@@ -36,7 +70,7 @@ class PersonalRecordRepository:
             .options(joinedload(PersonalRecord.exercise))
             .filter(
                 PersonalRecord.user_id == user_id,
-                PersonalRecord.record_type == RecordType.weight,
+                PersonalRecord.record_type == RecordType.estimated_1rm,
             )
             .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
             .first()
@@ -47,7 +81,7 @@ class PersonalRecordRepository:
 
         return {
             "exercise": record.exercise.name_kr,
-            "weight": record.value,
+            "weight": round(float(record.value), 1),
         }
 
     @staticmethod

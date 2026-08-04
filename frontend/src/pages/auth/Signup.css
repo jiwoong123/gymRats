@@ -19,30 +19,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgb(var(--white-rgb) / 0.06);
+  border: 1px solid rgb(var(--white-rgb) / 0.08);
   border-radius: 12px;
-  color: #f0f0f5;
+  color: var(--foreground);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--white-rgb) / 0.1);
 }
 
 .signup-title {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f0f0f5;
+  color: var(--foreground);
   letter-spacing: 0.02em;
 }
 
 .signup-desc {
   font-family: "Barlow", sans-serif;
   font-size: 0.875rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
   margin-bottom: 28px;
   margin-top: 4px;
 }
@@ -66,7 +66,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .input-wrapper {
@@ -76,10 +76,10 @@
 .form-input {
   width: 100%;
   padding: 13px 16px;
-  background: #1e1e2e;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--secondary);
+  border: 1px solid rgb(var(--white-rgb) / 0.08);
   border-radius: 12px;
-  color: #f0f0f5;
+  color: var(--foreground);
   font-family: "Barlow", sans-serif;
   font-size: 0.9375rem;
   outline: none;
@@ -88,11 +88,11 @@
 }
 
 .form-input:focus {
-  border-color: rgba(200, 255, 0, 0.4);
+  border-color: rgb(var(--primary-rgb) / 0.4);
 }
 
 .form-input::placeholder {
-  color: #3a3a5c;
+  color: var(--switch-background);
 }
 
 .input-eye {
@@ -102,7 +102,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #7070a0;
+  color: var(--muted-foreground);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -113,7 +113,7 @@
 .form-error {
   font-family: "Barlow", sans-serif;
   font-size: 0.8125rem;
-  color: #ff3355;
+  color: var(--destructive);
   margin: -4px 0;
 }
 
@@ -124,10 +124,10 @@
   gap: 8px;
   width: 100%;
   padding: 15px;
-  background: #c8ff00;
+  background: var(--primary);
   border: none;
   border-radius: 14px;
-  color: #0a0a0f;
+  color: var(--background);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -144,11 +144,11 @@
   text-align: center;
   font-family: "Barlow", sans-serif;
   font-size: 0.875rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .link-accent {
-  color: #c8ff00;
+  color: var(--primary);
   text-decoration: none;
   font-weight: 600;
 }

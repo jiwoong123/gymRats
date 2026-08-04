@@ -16,10 +16,10 @@ def get_dashboard_home(
 ):
     today = date.today()
 
-    monday = today - timedelta(days=today.weekday())
-    next_monday = monday + timedelta(days=7)
-    week_start = datetime.combine(monday, time.min)
-    week_end = datetime.combine(next_monday, time.min)
+    seven_days_ago = today - timedelta(days=6)
+    tomorrow = today + timedelta(days=1)
+    week_start = datetime.combine(seven_days_ago, time.min)
+    week_end = datetime.combine(tomorrow, time.min)
 
     user = UserRepository.get_user_by_id(
         db,

@@ -14,3 +14,18 @@ class PersonalRecordHistoryItem(BaseModel):
 class PersonalRecordHistoryPage(BaseModel):
     items: list[PersonalRecordHistoryItem]
     next_offset: int | None
+
+
+class PersonalRecordExerciseSummary(BaseModel):
+    exercise_id: int
+    exercise: str
+    best_weight: float
+    record_count: int
+    latest_achieved_at: datetime
+
+
+class PersonalRecordExerciseDetail(BaseModel):
+    exercise_id: int
+    exercise: str
+    best_weight: float
+    items: list[PersonalRecordHistoryItem]

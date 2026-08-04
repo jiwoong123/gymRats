@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -72,3 +72,40 @@ class SessionHistoryItem(BaseModel):
 class SessionHistoryPage(BaseModel):
     items: list[SessionHistoryItem]
     next_offset: int | None
+
+
+class WorkoutCalendarDay(BaseModel):
+    date: date
+    body_parts: list[int]
+
+
+class SessionDetailSet(BaseModel):
+    set_number: int
+    weight: float | None
+    reps: int | None
+    completed: bool
+    is_warmup: bool
+    volume: float
+
+
+class SessionDetailExercise(BaseModel):
+    exercise_id: int
+    name_kr: str
+    body_part: int
+    rest_seconds: int
+    completed_sets: int
+    volume: float
+    sets: list[SessionDetailSet]
+
+
+class SessionDetailResponse(BaseModel):
+    id: int
+    name: str
+    routine_name: str | None
+    performed_at: datetime
+    ended_at: datetime
+    duration: int
+    volume: float
+    completed_sets: int
+    memo: str | None
+    exercises: list[SessionDetailExercise]

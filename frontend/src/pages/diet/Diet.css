@@ -10,8 +10,8 @@
   display: flex;
   gap: 16px;
   align-items: center;
-  background: #13131c;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--card);
+  border: 1px solid rgb(var(--white-rgb) / 0.07);
   border-radius: 20px;
   padding: 18px;
 }
@@ -37,7 +37,7 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
-  color: #c8ff00;
+  color: var(--primary);
   line-height: 1;
 }
 
@@ -46,7 +46,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #7070a0;
+  color: var(--muted-foreground);
   margin-top: 1px;
 }
 
@@ -70,17 +70,17 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .kcal-goal-val {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.78rem;
-  color: #f0f0f5;
+  color: var(--foreground);
 }
 
 .kcal-goal-val.remain {
-  color: #c8ff00;
+  color: var(--primary);
 }
 
 .macro-mini-list {
@@ -101,7 +101,7 @@
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: #7070a0;
+  color: var(--muted-foreground);
   width: 40px;
   flex-shrink: 0;
 }
@@ -109,7 +109,7 @@
 .macro-mini-bar-bg {
   flex: 1;
   height: 4px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgb(var(--white-rgb) / 0.07);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -131,8 +131,8 @@
 
 /* Protein card */
 .protein-card {
-  background: #13131c;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--card);
+  border: 1px solid rgb(var(--white-rgb) / 0.07);
   border-radius: 18px;
   padding: 16px;
   display: flex;
@@ -150,12 +150,12 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(200, 255, 0, 0.1);
-  border: 1px solid rgba(200, 255, 0, 0.2);
+  background: rgb(var(--primary-rgb) / 0.1);
+  border: 1px solid rgb(var(--primary-rgb) / 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c8ff00;
+  color: var(--primary);
   flex-shrink: 0;
 }
 
@@ -163,14 +163,14 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #f0f0f5;
+  color: var(--foreground);
   line-height: 1;
 }
 
 .protein-sub {
   font-family: "Barlow", sans-serif;
   font-size: 0.72rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
   margin-top: 2px;
 }
 
@@ -186,14 +186,14 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
-  color: #c8ff00;
+  color: var(--primary);
   line-height: 1;
 }
 
 .protein-goal {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.875rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .protein-bar-wrap {
@@ -205,14 +205,14 @@
 .protein-bar-bg {
   flex: 1;
   height: 6px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgb(var(--white-rgb) / 0.07);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .protein-bar-fill {
   height: 100%;
-  background: linear-gradient(to right, #c8ff00, rgba(200, 255, 0, 0.6));
+  background: linear-gradient(to right, var(--primary), rgb(var(--primary-rgb) / 0.6));
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -220,7 +220,7 @@
 .protein-pct {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.72rem;
-  color: #c8ff00;
+  color: var(--primary);
   width: 30px;
   text-align: right;
   flex-shrink: 0;
@@ -228,8 +228,8 @@
 
 /* Macro balance */
 .macro-balance-card {
-  background: #13131c;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--card);
+  border: 1px solid rgb(var(--white-rgb) / 0.07);
   border-radius: 18px;
   padding: 16px;
   display: flex;
@@ -243,7 +243,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .macro-balance-inner {
@@ -275,20 +275,20 @@
 .legend-name {
   font-family: "Barlow", sans-serif;
   font-size: 0.8125rem;
-  color: #f0f0f5;
+  color: var(--foreground);
   flex: 1;
 }
 
 .legend-val {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
-  color: #f0f0f5;
+  color: var(--foreground);
 }
 
 .legend-pct {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.72rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
   width: 28px;
   text-align: right;
 }
@@ -301,8 +301,8 @@
 }
 
 .meal-card {
-  background: #13131c;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--card);
+  border: 1px solid rgb(var(--white-rgb) / 0.07);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -319,7 +319,7 @@
   transition: background 0.15s;
 }
 
-.meal-header:hover { background: rgba(255, 255, 255, 0.03); }
+.meal-header:hover { background: rgb(var(--white-rgb) / 0.03); }
 
 .meal-header-left {
   display: flex;
@@ -336,7 +336,7 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #f0f0f5;
+  color: var(--foreground);
   letter-spacing: 0.02em;
 }
 
@@ -346,8 +346,8 @@
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 6px;
-  background: rgba(200, 255, 0, 0.1);
-  color: #c8ff00;
+  background: rgb(var(--primary-rgb) / 0.1);
+  color: var(--primary);
   letter-spacing: 0.04em;
 }
 
@@ -360,11 +360,11 @@
 .meal-kcal {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8125rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }
 
 .meal-chevron {
-  color: #7070a0;
+  color: var(--muted-foreground);
   transition: transform 0.2s;
 }
 
@@ -373,14 +373,14 @@
 }
 
 .meal-body {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgb(var(--white-rgb) / 0.06);
   padding: 8px 0 4px;
 }
 
 .meal-empty {
   font-family: "Barlow", sans-serif;
   font-size: 0.8125rem;
-  color: #3a3a5c;
+  color: var(--switch-background);
   padding: 8px 16px;
   text-align: center;
 }
@@ -393,7 +393,7 @@
   transition: background 0.15s;
 }
 
-.food-row:hover { background: rgba(255, 255, 255, 0.02); }
+.food-row:hover { background: rgb(var(--white-rgb) / 0.02); }
 
 .food-info {
   flex: 1;
@@ -405,7 +405,7 @@
   font-family: "Barlow", sans-serif;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #f0f0f5;
+  color: var(--foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -415,14 +415,14 @@
   display: block;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.65rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
   margin-top: 1px;
 }
 
 .food-kcal {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8125rem;
-  color: #f0f0f5;
+  color: var(--foreground);
   flex-shrink: 0;
 }
 
@@ -432,7 +432,7 @@
   border-radius: 6px;
   background: none;
   border: none;
-  color: #3a3a5c;
+  color: var(--switch-background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -443,8 +443,8 @@
 }
 
 .food-remove:hover {
-  color: #ff3355;
-  background: rgba(255, 51, 85, 0.1);
+  color: var(--destructive);
+  background: rgb(var(--destructive-rgb) / 0.1);
 }
 
 .add-food-btn {
@@ -455,10 +455,10 @@
   width: calc(100% - 32px);
   margin: 6px 16px 10px;
   padding: 9px;
-  background: rgba(200, 255, 0, 0.06);
-  border: 1px dashed rgba(200, 255, 0, 0.25);
+  background: rgb(var(--primary-rgb) / 0.06);
+  border: 1px dashed rgb(var(--primary-rgb) / 0.25);
   border-radius: 10px;
-  color: #c8ff00;
+  color: var(--primary);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -467,13 +467,13 @@
   transition: background 0.15s;
 }
 
-.add-food-btn:hover { background: rgba(200, 255, 0, 0.1); }
+.add-food-btn:hover { background: rgb(var(--primary-rgb) / 0.1); }
 
 /* Food picker overlay */
 .food-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgb(var(--black-rgb) / 0.75);
   display: flex;
   align-items: flex-end;
   z-index: 50;
@@ -482,9 +482,9 @@
 .food-sheet {
   width: 100%;
   max-height: 72%;
-  background: #13131c;
+  background: var(--card);
   border-radius: 24px 24px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgb(var(--white-rgb) / 0.08);
   display: flex;
   flex-direction: column;
 }
@@ -501,27 +501,27 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #f0f0f5;
+  color: var(--foreground);
 }
 
 .sheet-close {
   background: none;
   border: none;
-  color: #7070a0;
+  color: var(--muted-foreground);
   cursor: pointer;
   display: flex;
   transition: color 0.2s;
 }
 
-.sheet-close:hover { color: #f0f0f5; }
+.sheet-close:hover { color: var(--foreground); }
 
 .food-search {
   margin: 0 16px 10px;
   padding: 11px 14px;
-  background: #1e1e2e;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--secondary);
+  border: 1px solid rgb(var(--white-rgb) / 0.08);
   border-radius: 10px;
-  color: #f0f0f5;
+  color: var(--foreground);
   font-family: "Barlow", sans-serif;
   font-size: 0.9rem;
   outline: none;
@@ -529,8 +529,8 @@
   transition: border-color 0.2s;
 }
 
-.food-search:focus { border-color: rgba(200, 255, 0, 0.35); }
-.food-search::placeholder { color: #3a3a5c; }
+.food-search:focus { border-color: rgb(var(--primary-rgb) / 0.35); }
+.food-search::placeholder { color: var(--switch-background); }
 
 .food-db-list {
   overflow-y: auto;
@@ -549,14 +549,14 @@
   padding: 12px 20px;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgb(var(--white-rgb) / 0.04);
   cursor: pointer;
   transition: background 0.15s;
   text-align: left;
   gap: 12px;
 }
 
-.food-db-item:hover { background: rgba(255, 255, 255, 0.04); }
+.food-db-item:hover { background: rgb(var(--white-rgb) / 0.04); }
 
 .food-db-info { flex: 1; min-width: 0; }
 
@@ -565,14 +565,14 @@
   font-family: "Barlow", sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #f0f0f5;
+  color: var(--foreground);
 }
 
 .food-db-macros {
   display: block;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.65rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
   margin-top: 2px;
 }
 
@@ -587,11 +587,11 @@
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #c8ff00;
+  color: var(--primary);
 }
 
 .food-db-unit {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 0.72rem;
-  color: #7070a0;
+  color: var(--muted-foreground);
 }

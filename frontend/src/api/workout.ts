@@ -25,6 +25,36 @@ export type SessionHistoryItem = {
   volume: number;
 };
 export type SessionHistoryPage = { items: SessionHistoryItem[]; next_offset: number | null };
+export type WorkoutCalendarDay = { date: string; body_parts: number[] };
+export type SessionDetailSet = {
+  set_number: number;
+  weight: number | null;
+  reps: number | null;
+  completed: boolean;
+  is_warmup: boolean;
+  volume: number;
+};
+export type SessionDetailExercise = {
+  exercise_id: number;
+  name_kr: string;
+  body_part: number;
+  rest_seconds: number;
+  completed_sets: number;
+  volume: number;
+  sets: SessionDetailSet[];
+};
+export type SessionDetail = {
+  id: number;
+  name: string;
+  routine_name: string | null;
+  performed_at: string;
+  ended_at: string;
+  duration: number;
+  volume: number;
+  completed_sets: number;
+  memo: string | null;
+  exercises: SessionDetailExercise[];
+};
 
 export async function getActiveWorkoutSession() {
   const response = await api.get<WorkoutSession | null>("/workout-sessions/active");
@@ -62,6 +92,16 @@ export async function finishWorkoutSession(
 
 export async function getWorkoutHistory(offset: number, limit = 10) {
   const response = await api.get<SessionHistoryPage>("/workout-sessions/history", { params: { offset, limit } });
+  return response.data;
+}
+
+export async function getWorkoutCalendar(month: string) {
+  const response = await api.get<WorkoutCalendarDay[]>("/workout-sessions/calendar", { params: { month } });
+  return response.data;
+}
+
+export async function getWorkoutSessionDetail(id: number) {
+  const response = await api.get<SessionDetail>(`/workout-sessions/${id}`);
   return response.data;
 }
 

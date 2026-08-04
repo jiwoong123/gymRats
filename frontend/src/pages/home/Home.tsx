@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Flame, Dumbbell, ChevronRight, Plus, Zap, Trophy } from "lucide-react";
+import { Flame, Dumbbell, ChevronRight, Plus, Trophy } from "lucide-react";
 import "./Home.css";
 import { useDashboard } from "../../hooks/useDashboard";
 
@@ -84,12 +84,12 @@ export default function Home() {
       <button
         type="button"
         className="weekly-card"
-        onClick={() => navigate("/records/weekly-summary")}
-        aria-label="이번 주 운동 요약 보기"
+        onClick={() => navigate("/records/workouts")}
+        aria-label="최근 7일 운동 요약 보기"
       >
         <div className="weekly-top">
-          <span className="section-label">이번 주</span>
-          <ChevronRight size={14} style={{ color: "#7070a0" }} />
+          <span className="section-label">최근 7일</span>
+          <ChevronRight size={14} style={{ color: "var(--muted-foreground)" }} />
         </div>
         <div className="weekly-stats">
           {weeklyStats.map((stat) => (
@@ -122,7 +122,13 @@ export default function Home() {
       <div className="section">
         <div className="section-header">
           <span className="section-label">빠른 시작</span>
-          <Zap size={14} style={{ color: "#c8ff00" }} />
+          <button
+            type="button"
+            className="routine-add-btn"
+            onClick={() => navigate("/routine/new")}
+          >
+            <Plus size={14} /> 루틴 추가
+          </button>
         </div>
         {data.quick_workouts.length > 0 ? (
           <div className="quick-grid">
@@ -183,14 +189,14 @@ export default function Home() {
           onClick={() => navigate("/records/personal-records")}
           aria-label="신기록 히스토리 보기"
         >
-          <Trophy size={18} style={{ color: "#c8ff00" }} />
+          <Trophy size={18} style={{ color: "var(--primary)" }} />
           <div>
             <p className="pr-label">최근 신기록</p>
             <p className="pr-value">
               {data.latest_pr.exercise} <strong>{data.latest_pr.weight.toLocaleString()}kg</strong>
             </p>
           </div>
-          <ChevronRight size={16} style={{ color: "#7070a0" }} />
+          <ChevronRight size={16} style={{ color: "var(--muted-foreground)" }} />
         </button>
       )}
     </div>

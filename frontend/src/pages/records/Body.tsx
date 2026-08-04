@@ -74,9 +74,9 @@ export default function Body() {
       {latest && (
         <div className="metric-cards">
           {[
-            { label: "체지방률", value: latest.fat, unit: "%", color: "#ff6b35" },
-            { label: "골격근량", value: latest.muscle, unit: "kg", color: "#00e5ff" },
-            { label: "BMI", value: (latest.weight / (1.75 * 1.75)).toFixed(1), unit: "", color: "#a855f7" },
+            { label: "체지방률", value: latest.fat, unit: "%", color: "var(--streak)" },
+            { label: "골격근량", value: latest.muscle, unit: "kg", color: "var(--chart-2)" },
+            { label: "BMI", value: (latest.weight / (1.75 * 1.75)).toFixed(1), unit: "", color: "var(--chart-4)" },
           ].map((m) => (
             <div key={m.label} className="metric-card">
               <span className="metric-label">{m.label}</span>
@@ -95,31 +95,31 @@ export default function Body() {
           <AreaChart data={WEIGHT_DATA} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
             <defs>
               <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="date"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#7070a0", fontSize: 10, fontFamily: "'Barlow Condensed'" }}
+              tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontFamily: "'Barlow Condensed'" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               domain={["auto", "auto"]}
-              tick={{ fill: "#7070a0", fontSize: 10, fontFamily: "'JetBrains Mono'" }}
+              tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontFamily: "'JetBrains Mono'" }}
             />
            
             <Area
               type="monotone"
               dataKey="weight"
-              stroke="#00e5ff"
+              stroke="var(--chart-2)"
               strokeWidth={2}
               fill="url(#wGrad)"
-              dot={{ fill: "#00e5ff", r: 3, strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: "#00e5ff" }}
+              dot={{ fill: "var(--chart-2)", r: 3, strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: "var(--chart-2)" }}
             />
           </AreaChart>
         </ResponsiveContainer>

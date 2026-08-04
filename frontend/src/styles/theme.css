@@ -1,22 +1,69 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /*
+   * Application color palette
+   * Change these tokens to update the theme across every screen.
+   * RGB channel tokens are used by translucent colors:
+   * rgb(var(--primary-rgb) / 10%).
+   */
+  --black-rgb: 0 0 0;
+  --white-rgb: 255 255 255;
+  --background-rgb: 10 10 15;
+  --primary-rgb: 200 255 0;
+  --destructive-rgb: 255 51 85;
+  --streak-rgb: 255 100 0;
+
   --font-size: 16px;
-  --background: #0a0a0f;
+  --background: rgb(var(--background-rgb));
+  --background-deep: #050508;
+  --background-soft: #0f0f17;
+  --background-raised: #101018;
   --foreground: #f0f0f5;
+  --foreground-bright: rgb(var(--white-rgb));
   --card: #13131c;
+  --card-soft: #15151f;
+  --card-hover: #171724;
+  --card-hover-alt: #171722;
   --card-foreground: #f0f0f5;
   --popover: #1a1a26;
+  --popover-soft: #1a1a25;
+  --popover-raised: #1a1a28;
+  --surface-raised: #1d1d29;
+  --surface-raised-alt: #1d1d2a;
+  --surface-high: #222230;
   --popover-foreground: #f0f0f5;
-  --primary: #c8ff00;
-  --primary-foreground: #0a0a0f;
+  --primary: rgb(var(--primary-rgb));
+  --primary-foreground: var(--background);
   --secondary: #1e1e2e;
   --secondary-foreground: #f0f0f5;
   --muted: #1e1e2e;
   --muted-foreground: #7070a0;
-  --accent: #c8ff00;
-  --accent-foreground: #0a0a0f;
-  --destructive: #ff3355;
+  --muted-foreground-alt: #70708c;
+  --text-subtle: #55556e;
+  --text-dim: #66667d;
+  --text-dim-alt: #686881;
+  --text-dim-soft: #696980;
+  --text-dim-cool: #696982;
+  --text-muted-soft: #72728c;
+  --text-muted-warm: #73738b;
+  --text-muted-alt: #777792;
+  --text-muted-light: #7c7c94;
+  --text-secondary: #85859b;
+  --text-secondary-alt: #8b8ba5;
+  --text-secondary-soft: #8d8da4;
+  --text-light: #9393ad;
+  --text-light-alt: #a0a0b0;
+  --text-light-soft: #a0a0b5;
+  --text-light-cool: #a0a0c0;
+  --text-bright-muted: #aaaabd;
+  --accent: var(--primary);
+  --accent-foreground: var(--background);
+  --destructive: rgb(var(--destructive-rgb));
+  --destructive-soft: #ff5570;
+  --destructive-light: #ff617a;
+  --destructive-lighter: #ff7088;
+  --destructive-bright: #ff7188;
   --destructive-foreground: #ffffff;
   --border: rgba(255, 255, 255, 0.08);
   --input: transparent;
@@ -24,12 +71,13 @@
   --switch-background: #3a3a5c;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #c8ff00;
-  --chart-1: #c8ff00;
+  --ring: var(--primary);
+  --chart-1: var(--primary);
   --chart-2: #00e5ff;
   --chart-3: #ff6b35;
   --chart-4: #a855f7;
   --chart-5: #f59e0b;
+  --streak: #ff6b35;
   --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -39,6 +87,56 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+}
+
+:root[data-mode="light"] {
+  --black-rgb: 0 0 0;
+  --white-rgb: 20 24 32;
+  --background-rgb: 244 246 249;
+  --primary-rgb: 91 122 0;
+  --background-deep: #e8ebf0;
+  --background-soft: #eef1f5;
+  --background-raised: #f7f8fa;
+  --foreground: #171a20;
+  --foreground-bright: #080a0e;
+  --card: #ffffff;
+  --card-soft: #fafbfc;
+  --card-hover: #f3f5f7;
+  --card-hover-alt: #f0f2f5;
+  --card-foreground: #171a20;
+  --popover: #ffffff;
+  --popover-soft: #fafbfc;
+  --popover-raised: #f6f7f9;
+  --surface-raised: #eceff3;
+  --surface-raised-alt: #e8ebf0;
+  --surface-high: #e0e4ea;
+  --popover-foreground: #171a20;
+  --primary-foreground: #ffffff;
+  --secondary: #e9edf2;
+  --secondary-foreground: #171a20;
+  --muted: #e9edf2;
+  --muted-foreground: #626b78;
+  --muted-foreground-alt: #69717c;
+  --text-subtle: #747c87;
+  --text-dim: #68717d;
+  --text-dim-alt: #6d7580;
+  --text-dim-soft: #737b86;
+  --text-dim-cool: #697380;
+  --text-muted-soft: #68727e;
+  --text-muted-warm: #716f6b;
+  --text-muted-alt: #626d7a;
+  --text-muted-light: #596573;
+  --text-secondary: #4f5b69;
+  --text-secondary-alt: #465362;
+  --text-secondary-soft: #53606d;
+  --text-light: #485563;
+  --text-light-alt: #3f4b58;
+  --text-light-soft: #45515e;
+  --text-light-cool: #435263;
+  --text-bright-muted: #354250;
+  --border: rgba(20, 24, 32, 0.12);
+  --input-background: #e9edf2;
+  --switch-background: #b8c0cb;
 }
 
 .dark {

@@ -1,8 +1,8 @@
 .records-subnav {
   flex-shrink: 0;
   display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: #0a0a0f;
+  border-bottom: 1px solid rgb(var(--white-rgb) / 0.07);
+  background: var(--background);
   padding: 0 20px;
   padding-top: 52px;
 }
@@ -13,7 +13,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: #7070a0;
+  color: var(--muted-foreground);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -21,6 +21,6 @@
 }
 
 .subnav-item.active {
-  color: #c8ff00;
-  border-bottom-color: #c8ff00;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }

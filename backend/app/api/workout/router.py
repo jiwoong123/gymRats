@@ -1,3 +1,6 @@
+from calendar import monthrange
+from datetime import date, datetime, time, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
@@ -7,6 +10,10 @@ from app.api.workout.schema import (
     SessionExerciseResponse,
     SessionHistoryItem,
     SessionHistoryPage,
+    WorkoutCalendarDay,
+    SessionDetailExercise,
+    SessionDetailResponse,
+    SessionDetailSet,
     SessionResponse,
     SessionSetResponse,
     StartSessionRequest,
@@ -82,6 +89,102 @@ def get_session_history(
             for session in items
         ],
         next_offset=offset + limit if has_more else None,
+    )
+
+
+@router.get("/calendar", response_model=list[WorkoutCalendarDay])
+def get_workout_calendar(
+    month: date = Query(default_factory=date.today),
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    month_start = month.replace(day=1)
+    month_end = month_start + timedelta(days=monthrange(month_start.year, month_start.month)[1])
+    sessions = WorkoutSessionReposiroty.get_completed_sessions_between(
+        db,
+        user_id,
+        datetime.combine(month_start, time.min),
+        datetime.combine(month_end, time.min),
+    )
+    body_parts_by_day: dict[date, set[int]] = {}
+    for session in sessions:
+        for workout_exercise in session.exercises:
+            has_completed_set = any(
+                workout_set.completed and not workout_set.is_warmup
+                for workout_set in workout_exercise.sets
+            )
+            if has_completed_set:
+                body_parts_by_day.setdefault(session.started_at.date(), set()).add(
+                    workout_exercise.exercise.body_part
+                )
+
+    return [
+        WorkoutCalendarDay(date=workout_date, body_parts=sorted(body_parts))
+        for workout_date, body_parts in body_parts_by_day.items()
+    ]
+
+
+@router.get("/{session_id}", response_model=SessionDetailResponse)
+def get_session_detail(
+    session_id: int,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    session = WorkoutSessionReposiroty.get_completed_session(db, user_id, session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="운동 기록을 찾을 수 없습니다.")
+
+    completed_sets = [
+        workout_set
+        for exercise in session.exercises
+        for workout_set in exercise.sets
+        if workout_set.completed and not workout_set.is_warmup
+    ]
+    exercises = []
+    for exercise in sorted(session.exercises, key=lambda value: value.exercise_order):
+        ordered_sets = sorted(exercise.sets, key=lambda value: value.set_number)
+        exercise_completed_sets = [
+            workout_set
+            for workout_set in ordered_sets
+            if workout_set.completed and not workout_set.is_warmup
+        ]
+        exercises.append(SessionDetailExercise(
+            exercise_id=exercise.exercise_id,
+            name_kr=exercise.exercise.name_kr,
+            body_part=exercise.exercise.body_part,
+            rest_seconds=exercise.rest_seconds,
+            completed_sets=len(exercise_completed_sets),
+            volume=float(sum(
+                (workout_set.weight or 0) * (workout_set.reps or 0)
+                for workout_set in exercise_completed_sets
+            )),
+            sets=[
+                SessionDetailSet(
+                    set_number=workout_set.set_number,
+                    weight=workout_set.weight,
+                    reps=workout_set.reps,
+                    completed=workout_set.completed,
+                    is_warmup=workout_set.is_warmup,
+                    volume=float((workout_set.weight or 0) * (workout_set.reps or 0)),
+                )
+                for workout_set in ordered_sets
+            ],
+        ))
+
+    return SessionDetailResponse(
+        id=session.id,
+        name=session.name or (session.routine.name if session.routine else "자유 운동"),
+        routine_name=session.routine.name if session.routine else None,
+        performed_at=session.started_at,
+        ended_at=session.ended_at,
+        duration=max(0, int((session.ended_at - session.started_at).total_seconds() // 60)),
+        volume=float(sum(
+            (workout_set.weight or 0) * (workout_set.reps or 0)
+            for workout_set in completed_sets
+        )),
+        completed_sets=len(completed_sets),
+        memo=session.memo,
+        exercises=exercises,
     )
 
 

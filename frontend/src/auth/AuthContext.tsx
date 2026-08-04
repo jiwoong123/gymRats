@@ -14,7 +14,7 @@ export interface User {
   nickname: string;
   gender: number;
   birth: string;
-  height: number;
+  height: number | null;
   created_at: string;
 }
 

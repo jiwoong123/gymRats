@@ -16,7 +16,7 @@ import GuestRoute from "./auth/GuestRoutes";
 import NewRoutine from "./pages/routine/NewRoutine";
 import WorkoutSessionPage from "./pages/workoutsession/WorkoutSession";
 import PersonalRecords from "./pages/records/PersonalRecords";
-import WeeklySummary from "./pages/records/WeeklySummary";
+import WorkoutDetail from "./pages/records/WorkoutDetail";
 
 function App() {
     return (
@@ -33,9 +33,9 @@ function App() {
         <Route path="/menu" element={<MenuHome />} />
         <Route path="/diet" element={<Diet />} />
         <Route path="/records/workouts" element={<Workouts />} />
+        <Route path="/records/workouts/:sessionId" element={<WorkoutDetail />} />
         <Route path="/records/body" element={<Body />} />
         <Route path="/records/personal-records" element={<PersonalRecords />} />
-        <Route path="/records/weekly-summary" element={<WeeklySummary />} />
         <Route path="/routine/new" element={<NewRoutine />} />
         <Route path="/workout-session" element={<WorkoutSessionPage />} />
       </Route>

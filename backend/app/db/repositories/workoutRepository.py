@@ -82,15 +82,16 @@ class WorkoutRepository:
         end: datetime,
     ) -> list[dict]:
         sessions = cls._sessions_between(db, user_id, start, end)
-        volume_by_day = {day: 0.0 for day in range(7)}
+        start_date = start.date()
+        volume_by_day = {start_date + timedelta(days=offset): 0.0 for offset in range(7)}
         for session in sessions:
             _, volume = cls._session_totals(session)
-            volume_by_day[session.started_at.weekday()] += volume
+            volume_by_day[session.started_at.date()] += volume
 
         day_names = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         return [
-            {"day": day_names[day], "volume": volume_by_day[day]}
-            for day in range(7)
+            {"day": day_names[day.weekday()], "volume": volume}
+            for day, volume in volume_by_day.items()
         ]
 
     @classmethod
@@ -124,7 +125,13 @@ class WorkoutRepository:
                 )
             recent_workouts.append({
                 "id": session.id,
-                "name": session.name,
+                # Sessions created before the name column was introduced can
+                # still have a null name.  The dashboard response requires a
+                # string, so fall back to the routine name (or a generic name)
+                # instead of making the whole home endpoint fail validation.
+                "name": session.name or (
+                    session.routine.name if session.routine else "자유운동"
+                ),
                 "performed_at": session.started_at.date(),
                 "duration": duration,
                 "volume": volume,

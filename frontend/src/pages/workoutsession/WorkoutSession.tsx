@@ -147,6 +147,9 @@ export default function WorkoutSessionPage() {
       await Promise.all([
         queryClient.refetchQueries({ queryKey: ["home"], exact: true, type: "all" }),
         queryClient.refetchQueries({ queryKey: ["workout-history"], exact: true, type: "all" }),
+        queryClient.refetchQueries({ queryKey: ["workout-calendar"], type: "all" }),
+        queryClient.refetchQueries({ queryKey: ["personal-record-exercises"], type: "all" }),
+        queryClient.refetchQueries({ queryKey: ["personal-record-exercise"], type: "all" }),
       ]);
       navigate("/records/workouts", { replace: true });
     } catch (requestError) {

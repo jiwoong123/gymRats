@@ -6,14 +6,8 @@ export default function RecordsSubNav() {
   return (
     <div className="records-subnav">
       <Link
-        to="/records/weekly-summary"
-        className={"subnav-item" + (loc.pathname === "/records/weekly-summary" ? " active" : "")}
-      >
-        주간 요약
-      </Link>
-      <Link
         to="/records/workouts"
-        className={"subnav-item" + (loc.pathname === "/records/workouts" ? " active" : "")}
+        className={"subnav-item" + (loc.pathname.startsWith("/records/workouts") ? " active" : "")}
       >
         운동 기록
       </Link>

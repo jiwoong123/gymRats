@@ -20,6 +20,18 @@ export interface SignupRequest {
   height:number,
 }
 
+export interface ProfileUpdateRequest {
+  nickname?: string;
+  gender?: number;
+  birth?: string;
+  height?: number;
+}
+
+export interface PasswordUpdateRequest {
+  current_password: string;
+  new_password: string;
+}
+
 interface RefreshRequest {
   refresh_token: string;
 }
@@ -48,4 +60,17 @@ export async function logout(refreshToken: string): Promise<void> {
 export async function getMe(): Promise<User> {
   const response = await api.get<User>("/users/me");
   return response.data;
+}
+
+export async function updateMe(data: ProfileUpdateRequest): Promise<User> {
+  const response = await api.patch<User>("/users/me", data);
+  return response.data;
+}
+
+export async function changePassword(data: PasswordUpdateRequest): Promise<void> {
+  await api.patch("/users/me/password", data);
+}
+
+export async function deleteMe(): Promise<void> {
+  await api.delete("/users/me");
 }

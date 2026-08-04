@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models.routine import Routine
@@ -8,6 +9,8 @@ from app.models.user import User
 from app.models.workout_exercise import WorkoutExercise
 from app.models.workout_session import WorkoutSession
 from app.models.workout_set import WorkoutSet
+from app.models.personal_record import PersonalRecord
+from app.models.enum.recordType import RecordType
 
 
 class ActiveWorkoutSessionError(Exception):
@@ -17,6 +20,27 @@ class ActiveWorkoutSessionError(Exception):
 
 
 class WorkoutSessionReposiroty:
+
+    @staticmethod
+    def get_completed_session(
+        db: Session,
+        user_id: int,
+        session_id: int,
+    ) -> WorkoutSession | None:
+        return (
+            db.query(WorkoutSession)
+            .options(
+                joinedload(WorkoutSession.routine),
+                selectinload(WorkoutSession.exercises).joinedload(WorkoutExercise.exercise),
+                selectinload(WorkoutSession.exercises).selectinload(WorkoutExercise.sets),
+            )
+            .filter(
+                WorkoutSession.id == session_id,
+                WorkoutSession.user_id == user_id,
+                WorkoutSession.ended_at.is_not(None),
+            )
+            .first()
+        )
 
     @staticmethod
     def delete_completed_session(db: Session, user_id: int, session_id: int) -> bool:
@@ -49,6 +73,29 @@ class WorkoutSessionReposiroty:
             .order_by(WorkoutSession.started_at.desc(), WorkoutSession.id.desc())
             .offset(offset)
             .limit(limit)
+            .all()
+        )
+
+    @staticmethod
+    def get_completed_sessions_between(
+        db: Session,
+        user_id: int,
+        start: datetime,
+        end: datetime,
+    ) -> list[WorkoutSession]:
+        return (
+            db.query(WorkoutSession)
+            .options(
+                selectinload(WorkoutSession.exercises).joinedload(WorkoutExercise.exercise),
+                selectinload(WorkoutSession.exercises).selectinload(WorkoutExercise.sets),
+            )
+            .filter(
+                WorkoutSession.user_id == user_id,
+                WorkoutSession.ended_at.is_not(None),
+                WorkoutSession.started_at >= start,
+                WorkoutSession.started_at < end,
+            )
+            .order_by(WorkoutSession.started_at.asc())
             .all()
         )
 
@@ -137,6 +184,7 @@ class WorkoutSessionReposiroty:
         session.exercises.clear()
         db.flush()
 
+        completed_sets: list[tuple[int, WorkoutSet]] = []
         for exercise_order, exercise_data in enumerate(exercises, start=1):
             workout_exercise = WorkoutExercise(
                 workout_session_id=session.id,
@@ -147,7 +195,7 @@ class WorkoutSessionReposiroty:
             db.add(workout_exercise)
             db.flush()
             for set_number, set_data in enumerate(exercise_data["sets"], start=1):
-                db.add(WorkoutSet(
+                workout_set = WorkoutSet(
                     workout_exercise_id=workout_exercise.id,
                     set_number=set_number,
                     weight=set_data["weight"],
@@ -162,13 +210,63 @@ class WorkoutSessionReposiroty:
                     is_super_set=False,
                     completed=set_data["completed"],
                     is_pr_updated=False,
-                ))
+                )
+                db.add(workout_set)
+                if workout_set.completed:
+                    completed_sets.append((exercise_data["exercise_id"], workout_set))
 
         routine_name = session.routine.name if session.routine else "자유운동"
         default_name = f"{session.started_at.month}월 {session.started_at.day}일 {routine_name}"
         session.name = name or default_name[:50]
         session.memo = memo
         session.ended_at = session.started_at + timedelta(seconds=elapsed_seconds)
+        db.flush()
+
+        exercise_ids = {exercise_id for exercise_id, _ in completed_sets}
+        previous_records = {}
+        if exercise_ids:
+            previous_records = {
+                (exercise_id, record_type): float(value)
+                for exercise_id, record_type, value in (
+                    db.query(
+                        PersonalRecord.exercise_id,
+                        PersonalRecord.record_type,
+                        func.max(PersonalRecord.value),
+                    )
+                    .filter(
+                        PersonalRecord.user_id == session.user_id,
+                        PersonalRecord.exercise_id.in_(exercise_ids),
+                    )
+                    .group_by(PersonalRecord.exercise_id, PersonalRecord.record_type)
+                    .all()
+                )
+            }
+
+        for exercise_id, workout_set in completed_sets:
+            weight = float(workout_set.weight or 0)
+            reps = workout_set.reps or 0
+            if weight <= 0 or reps <= 0:
+                continue
+            candidates = (
+                (RecordType.weight, weight),
+                (RecordType.volume, weight * reps),
+                (RecordType.estimated_1rm, round(weight * (1 + reps / 30), 1)),
+            )
+            for record_type, value in candidates:
+                key = (exercise_id, record_type)
+                if value <= previous_records.get(key, 0):
+                    continue
+                previous_records[key] = value
+                db.add(PersonalRecord(
+                    user_id=session.user_id,
+                    exercise_id=exercise_id,
+                    workout_set_id=workout_set.id,
+                    record_type=record_type,
+                    value=value,
+                    achieved_at=session.ended_at,
+                ))
+                workout_set.is_pr_updated = True
+
         db.commit()
         return session
 
