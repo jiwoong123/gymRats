@@ -41,6 +41,13 @@ class User(Base):
     birth: Mapped[datetime.date]
 
     height: Mapped[float | None]
+
+    training_level: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="untrained",
+        server_default="untrained",
+    )
        
     personal_records: Mapped[list["PersonalRecord"]] = relationship(
         back_populates="user",

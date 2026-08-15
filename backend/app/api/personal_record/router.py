@@ -10,6 +10,7 @@ from app.api.personal_record.schema import (
 from app.auth.jwt import get_current_user_id
 from app.db.dependencies import get_db
 from app.db.repositories.personalRecordRepository import PersonalRecordRepository
+from app.models.enum.recordType import RecordType
 
 
 router = APIRouter()
@@ -20,9 +21,22 @@ def _history_item(record) -> PersonalRecordHistoryItem:
         id=record.id,
         exercise_id=record.exercise_id,
         exercise=record.exercise.name_kr,
-        weight=round(float(record.value), 1),
+        record_type=record.record_type,
+        value=round(float(record.value), 1),
         achieved_at=record.achieved_at,
     )
+
+
+def _best_values(records) -> dict:
+    best_by_type = {}
+    for record in records:
+        value = round(float(record.value), 1)
+        best_by_type[record.record_type] = max(best_by_type.get(record.record_type, value), value)
+    return {
+        "best_weight": best_by_type.get(RecordType.weight),
+        "best_volume": best_by_type.get(RecordType.volume),
+        "best_estimated_1rm": best_by_type.get(RecordType.estimated_1rm),
+    }
 
 
 @router.get("/exercises", response_model=list[PersonalRecordExerciseSummary])
@@ -38,15 +52,21 @@ def get_personal_record_exercises(
             grouped[record.exercise_id] = {
                 "exercise_id": record.exercise_id,
                 "exercise": record.exercise.name_kr,
-                "best_weight": round(float(record.value), 1),
+                "records": [record],
                 "record_count": 1,
                 "latest_achieved_at": record.achieved_at,
             }
         else:
-            summary["best_weight"] = max(summary["best_weight"], round(float(record.value), 1))
+            summary["records"].append(record)
             summary["record_count"] += 1
 
-    return list(grouped.values())
+    return [
+        {
+            **{key: value for key, value in summary.items() if key != "records"},
+            **_best_values(summary["records"]),
+        }
+        for summary in grouped.values()
+    ]
 
 
 @router.get("/exercises/{exercise_id}", response_model=PersonalRecordExerciseDetail)
@@ -62,7 +82,7 @@ def get_personal_record_exercise_detail(
     return PersonalRecordExerciseDetail(
         exercise_id=exercise_id,
         exercise=records[0].exercise.name_kr,
-        best_weight=round(max(float(record.value) for record in records), 1),
+        **_best_values(records),
         items=[_history_item(record) for record in records],
     )
 

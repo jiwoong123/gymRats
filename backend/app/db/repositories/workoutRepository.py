@@ -1,9 +1,11 @@
 from datetime import date, datetime, timedelta
 
+from sqlalchemy import case, false, func, true
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models.workout_exercise import WorkoutExercise
 from app.models.workout_session import WorkoutSession
+from app.models.workout_set import WorkoutSet
 
 
 class WorkoutRepository:
@@ -72,6 +74,75 @@ class WorkoutRepository:
             "volume": sum(volume for _, volume in totals),
             "sets": sum(sets for sets, _ in totals),
         }
+
+    @staticmethod
+    def get_weekly_dashboard(
+        db: Session,
+        user_id: int,
+        start: datetime,
+        end: datetime,
+    ) -> tuple[dict, list[dict]]:
+        workout_day = func.trunc(WorkoutSession.started_at)
+        completed_set = case(
+            (
+                (WorkoutSet.completed == true()) & (WorkoutSet.is_warmup == false()),
+                1,
+            ),
+            else_=0,
+        )
+        completed_volume = case(
+            (
+                (WorkoutSet.completed == true()) & (WorkoutSet.is_warmup == false()),
+                func.coalesce(WorkoutSet.weight, 0) * func.coalesce(WorkoutSet.reps, 0),
+            ),
+            else_=0,
+        )
+        rows = (
+            db.query(
+                workout_day.label("workout_day"),
+                func.sum(completed_set).label("completed_sets"),
+                func.sum(completed_volume).label("volume"),
+            )
+            .outerjoin(
+                WorkoutExercise,
+                WorkoutExercise.workout_session_id == WorkoutSession.id,
+            )
+            .outerjoin(WorkoutSet, WorkoutSet.workout_exercise_id == WorkoutExercise.id)
+            .filter(
+                WorkoutSession.user_id == user_id,
+                WorkoutSession.ended_at.is_not(None),
+                WorkoutSession.started_at >= start,
+                WorkoutSession.started_at < end,
+            )
+            .group_by(workout_day)
+            .order_by(workout_day)
+            .all()
+        )
+        volume_by_day = {
+            start.date() + timedelta(days=offset): 0.0 for offset in range(7)
+        }
+        total_sets = 0
+        total_volume = 0.0
+        for row in rows:
+            day = row.workout_day.date() if isinstance(row.workout_day, datetime) else row.workout_day
+            volume = float(row.volume or 0)
+            completed_sets = int(row.completed_sets or 0)
+            volume_by_day[day] = volume
+            total_sets += completed_sets
+            total_volume += volume
+
+        day_names = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+        return (
+            {
+                "workout_days": len(rows),
+                "volume": total_volume,
+                "sets": total_sets,
+            },
+            [
+                {"day": day_names[day.weekday()], "volume": volume}
+                for day, volume in volume_by_day.items()
+            ],
+        )
 
     @classmethod
     def get_weekly_activity(
@@ -144,17 +215,22 @@ class WorkoutRepository:
         user_id: int,
         today: date,
     ) -> int:
-        started_at_values = (
-            db.query(WorkoutSession.started_at)
+        workout_day = func.trunc(WorkoutSession.started_at)
+        workout_days = (
+            db.query(workout_day.label("workout_day"))
             .filter(WorkoutSession.user_id == user_id, WorkoutSession.ended_at.is_not(None))
-            .order_by(WorkoutSession.started_at.desc())
-            .all()
+            .distinct()
+            .order_by(workout_day.desc())
+            .yield_per(32)
         )
-        workout_days = {row[0].date() for row in started_at_values}
-        cursor = today if today in workout_days else today - timedelta(days=1)
-
+        cursor = today
         streak = 0
-        while cursor in workout_days:
+        for row in workout_days:
+            day = row.workout_day.date() if isinstance(row.workout_day, datetime) else row.workout_day
+            if streak == 0 and day == today - timedelta(days=1):
+                cursor = day
+            if day != cursor:
+                break
             streak += 1
             cursor -= timedelta(days=1)
         return streak

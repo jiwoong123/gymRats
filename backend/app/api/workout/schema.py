@@ -64,6 +64,7 @@ class SessionHistoryItem(BaseModel):
     id: int
     performed_at: datetime
     name: str
+    routine_icon: str | None
     exercise_names: list[str]
     duration: int
     volume: float
@@ -74,9 +75,51 @@ class SessionHistoryPage(BaseModel):
     next_offset: int | None
 
 
+class CalendarWorkoutBrief(BaseModel):
+    id: int
+    name: str
+    started_at: datetime
+    duration: int
+    volume: float
+    completed_sets: int
+    exercise_names: list[str]
+    routine_icon: str | None
+
+
 class WorkoutCalendarDay(BaseModel):
     date: date
     body_parts: list[int]
+    workouts: list[CalendarWorkoutBrief]
+
+
+class MuscleFatigueStat(BaseModel):
+    body_part: int
+    fatigue: int
+    last_trained_at: datetime | None
+
+
+class BodyPartWorkoutStat(BaseModel):
+    body_part: int
+    completed_sets: int
+    volume: float
+
+
+class WeeklyWorkoutStat(BaseModel):
+    week_start: date
+    sessions: int
+    completed_sets: int
+
+
+class WorkoutStatisticsResponse(BaseModel):
+    period_days: int
+    sessions: int
+    active_days: int
+    completed_sets: int
+    total_volume: float
+    average_duration: int
+    muscle_fatigue: list[MuscleFatigueStat]
+    body_parts: list[BodyPartWorkoutStat]
+    weekly: list[WeeklyWorkoutStat]
 
 
 class SessionDetailSet(BaseModel):

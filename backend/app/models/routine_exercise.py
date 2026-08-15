@@ -34,11 +34,10 @@ class RoutineExercise(Base):
 
     exercise_order: Mapped[int]
 
-    target_sets: Mapped[int | None]
-
-    target_reps: Mapped[int | None]
-
-    target_weight: Mapped[float | None]
+    sets: Mapped[list["RoutineSet"]] = relationship(
+        back_populates="routine_exercise",
+        cascade="all, delete-orphan",
+    )
 
     rest_seconds: Mapped[int | None]
 

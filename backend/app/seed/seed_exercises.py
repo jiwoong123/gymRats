@@ -3,7 +3,10 @@ from sqlalchemy import select
 from app.models.enum.bodyPart import BodyPart
 from app.models.enum.equipment import Equipment
 from app.models.enum.exerciseCategory import ExerciseCategory
+from app.models.cardio_exercise import CardioExercise
 from app.models.exercise import Exercise
+from app.models.stretching import Stretching
+from app.models.weight_exercise import WeightExercise
 
 
 ExerciseSeed = tuple[
@@ -190,6 +193,58 @@ EXERCISE_SEEDS: list[ExerciseSeed] = [
     (T, Equipment.others, BodyPart.leg, None, "종아리 폼롤링", "Calf Foam Rolling"),
 ]
 
+# Intermediate starting weights in kg for exercises whose loading differs
+# materially from the equipment/body-part baseline below.
+INTERMEDIATE_WEIGHT_OVERRIDES = {
+    "Bench Press": 50,
+    "Incline Bench Press": 40,
+    "Decline Bench Press": 50,
+    "Deadlift": 70,
+    "Barbell Row": 45,
+    "Pendlay Row": 40,
+    "T-Bar Row": 45,
+    "Overhead Press": 30,
+    "Close-Grip Bench Press": 40,
+    "Squat": 60,
+    "Front Squat": 45,
+    "Romanian Deadlift": 55,
+    "Sumo Deadlift": 70,
+    "Barbell Hip Thrust": 60,
+    "Leg Press": 100,
+    "Hack Squat": 70,
+}
+
+EQUIPMENT_BASE_WEIGHT = {
+    Equipment.barbell: 30,
+    Equipment.ezbar: 20,
+    Equipment.dumbbell: 12,
+    Equipment.kettlebell: 16,
+    Equipment.cable: 20,
+    Equipment.machine: 30,
+    Equipment.bodyweight: 0,
+    Equipment.others: 0,
+}
+
+LEVEL_MULTIPLIERS = {
+    "untrained": 0.4,
+    "novice": 0.7,
+    "intermediate": 1.0,
+    "advanced": 1.35,
+    "elite": 1.7,
+}
+
+
+def default_weights(category, equipment, name_eng: str) -> dict[str, float]:
+    """Build safe, 2.5 kg-rounded suggestions for every training level."""
+    if category != S or equipment in {Equipment.bodyweight, Equipment.others}:
+        base = 0
+    else:
+        base = INTERMEDIATE_WEIGHT_OVERRIDES.get(name_eng, EQUIPMENT_BASE_WEIGHT[equipment])
+    return {
+        f"default_weight_{level}": round(base * multiplier / 2.5) * 2.5
+        for level, multiplier in LEVEL_MULTIPLIERS.items()
+    }
+
 
 def seed_exercises(db) -> list[Exercise]:
     """Insert missing exercises and return the complete seed catalog in seed order."""
@@ -201,15 +256,25 @@ def seed_exercises(db) -> list[Exercise]:
 
     new_exercises = []
     for category, equipment, body_part, sub_body_part, name_kr, name_eng in EXERCISE_SEEDS:
+        weights = default_weights(category, equipment, name_eng)
         if name_eng in exercises_by_name:
+            exercise = exercises_by_name[name_eng]
+            for field, value in weights.items():
+                setattr(exercise, field, value)
             continue
-        exercise = Exercise(
+        exercise_class = {
+            ExerciseCategory.strength: WeightExercise,
+            ExerciseCategory.cardio: CardioExercise,
+            ExerciseCategory.stretching: Stretching,
+        }[category]
+        exercise = exercise_class(
             category=category,
             equipment=equipment,
             body_part=body_part,
             sub_body_part=sub_body_part,
             name_kr=name_kr,
             name_eng=name_eng,
+            **weights,
         )
         exercises_by_name[name_eng] = exercise
         new_exercises.append(exercise)

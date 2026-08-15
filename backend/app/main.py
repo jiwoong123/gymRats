@@ -6,6 +6,7 @@ from app.api.dashboard.router import router as dashboard_router
 from app.api.routine.router import router as routine_router
 from app.api.workout.router import router as workout_router
 from app.api.personal_record.router import router as personal_record_router
+from app.core.config import settings
 
 # from app.workouts.router import router as workout_router
 # from app.users.router import router as user_router
@@ -18,7 +19,7 @@ app = FastAPI(
 # Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

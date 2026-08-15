@@ -17,6 +17,13 @@ class PersonalRecord(Base):
             "exercise_id",
             "achieved_at",
         ),
+        Index(
+            "ix_pr_user_ex_type_value",
+            "user_id",
+            "exercise_id",
+            "record_type",
+            "value",
+        ),
     )
 
     id: Mapped[int] = mapped_column(

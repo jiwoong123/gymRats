@@ -15,6 +15,12 @@ class WorkoutSession(Base):
             "user_id",
             "started_at",
         ),
+        Index(
+            "ix_ws_user_routine_started",
+            "user_id",
+            "routine_id",
+            "started_at",
+        ),
     )
     id:Mapped[int] = mapped_column(
         Identity(),

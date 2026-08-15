@@ -1,6 +1,10 @@
 from datetime import date, datetime
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
+
+TrainingLevel = Literal["untrained", "novice", "intermediate", "advanced", "elite"]
 
 
 class UserProfileUpdateRequest(BaseModel):
@@ -8,6 +12,7 @@ class UserProfileUpdateRequest(BaseModel):
     gender: int | None = Field(default=None, ge=1, le=2)
     birth: date | None = None
     height: float | None = Field(default=None, gt=0)
+    training_level: TrainingLevel | None = None
 
 
 class UserPasswordUpdateRequest(BaseModel):
@@ -26,6 +31,7 @@ class UserMeResponse(BaseModel):
     gender: int
     birth: date
     height: float | None
+    training_level: TrainingLevel
 
     created_at: datetime
     updated_at: datetime

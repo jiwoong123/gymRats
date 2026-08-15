@@ -8,13 +8,14 @@ from app.db.repositories.userRepository import UserRepository
 from app.db.repositories.workoutRepository import WorkoutRepository
 from app.db.repositories.routineRepository import RoutineRepository
 from app.db.repositories.personalRecordRepository import PersonalRecordRepository
+from app.core.time import utc_today
 
 
 def get_dashboard_home(
     db: Session,
     user_id: int,
 ):
-    today = date.today()
+    today = utc_today()
 
     seven_days_ago = today - timedelta(days=6)
     tomorrow = today + timedelta(days=1)
@@ -28,24 +29,16 @@ def get_dashboard_home(
     if user is None:
         raise ValueError("User not found")
 
-    weekly_summary = WorkoutRepository.get_weekly_summary(
+    weekly_summary, weekly_activity = WorkoutRepository.get_weekly_dashboard(
         db,
         user_id,
         week_start,
         week_end,
     )
 
-    weekly_activity = WorkoutRepository.get_weekly_activity(
+    quick_workouts = RoutineRepository.get_routines_by_recent_use(
         db,
         user_id,
-        week_start,
-        week_end,
-    )
-
-    quick_workouts = RoutineRepository.get_recent_routines(
-        db,
-        user_id,
-        limit=3,
     )
 
     recent_workouts = WorkoutRepository.get_recent_sessions(

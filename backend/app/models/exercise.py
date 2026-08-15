@@ -37,6 +37,12 @@ class Exercise(Base):
         nullable=True,
     )
 
+    __mapper_args__ = {
+        "polymorphic_on": "category",
+        "polymorphic_abstract": True,
+        "with_polymorphic": "*",
+    }
+
     personal_records: Mapped[list["PersonalRecord"]] = relationship(
         back_populates="exercise",
     )

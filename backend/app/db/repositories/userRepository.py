@@ -30,7 +30,7 @@ class UserRepository:
 
         db.add(user)
 
-        db.commit()
+        db.flush()
 
         db.refresh(user)
 
@@ -45,7 +45,7 @@ class UserRepository:
         for field, value in values.items():
             setattr(user, field, value)
 
-        db.commit()
+        db.flush()
         db.refresh(user)
         return user
 
@@ -61,7 +61,7 @@ class UserRepository:
             .filter(RefreshToken.user_id == user.id)
             .delete(synchronize_session=False)
         )
-        db.commit()
+        db.flush()
 
     @staticmethod
     def delete_user(
@@ -69,4 +69,4 @@ class UserRepository:
         user: User,
     ) -> None:
         db.delete(user)
-        db.commit()
+        db.flush()

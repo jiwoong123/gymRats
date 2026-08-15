@@ -24,6 +24,13 @@ class Routine(Base):
         nullable=False,
     )
 
+    icon: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="dumbbell",
+        server_default="dumbbell",
+    )
+
     description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,

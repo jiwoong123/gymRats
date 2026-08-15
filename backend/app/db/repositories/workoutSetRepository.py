@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.workout_set import WorkoutSet
 
 
-class WorkoutSessionReposiroty:
+class WorkoutSetRepository:
 
     @staticmethod
     def create_workout_set(
@@ -10,7 +10,7 @@ class WorkoutSessionReposiroty:
         set: WorkoutSet,
     ):
         db.add(set)
-        db.commit()
+        db.flush()
 
 
     @staticmethod

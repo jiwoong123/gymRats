@@ -1,6 +1,10 @@
 from datetime import date
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+TrainingLevel = Literal["untrained", "novice", "intermediate", "advanced", "elite"]
 
 
 class SignupRequest(BaseModel):
@@ -15,6 +19,28 @@ class SignupRequest(BaseModel):
     birth: date
 
     height: float
+
+    training_level: TrainingLevel = "untrained"
+    email_verification_token: str = Field(min_length=20, max_length=200)
+
+
+class EmailVerificationRequest(BaseModel):
+    email: EmailStr
+
+
+class EmailVerificationRequestResponse(BaseModel):
+    challenge_id: int
+    expires_in: int = 600
+
+
+class EmailVerificationConfirmRequest(BaseModel):
+    email: EmailStr
+    challenge_id: int
+    code: str = Field(pattern=r"^\d{6}$")
+
+
+class EmailVerificationConfirmResponse(BaseModel):
+    verification_token: str
 
 
 class LoginRequest(BaseModel):

@@ -14,10 +14,7 @@ class PersonalRecordRepository:
         return (
             db.query(PersonalRecord)
             .options(joinedload(PersonalRecord.exercise))
-            .filter(
-                PersonalRecord.user_id == user_id,
-                PersonalRecord.record_type == RecordType.estimated_1rm,
-            )
+            .filter(PersonalRecord.user_id == user_id)
             .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
             .all()
         )
@@ -34,7 +31,6 @@ class PersonalRecordRepository:
             .filter(
                 PersonalRecord.user_id == user_id,
                 PersonalRecord.exercise_id == exercise_id,
-                PersonalRecord.record_type == RecordType.estimated_1rm,
             )
             .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
             .all()
@@ -50,10 +46,7 @@ class PersonalRecordRepository:
         return (
             db.query(PersonalRecord)
             .options(joinedload(PersonalRecord.exercise))
-            .filter(
-                PersonalRecord.user_id == user_id,
-                PersonalRecord.record_type == RecordType.estimated_1rm,
-            )
+            .filter(PersonalRecord.user_id == user_id)
             .order_by(PersonalRecord.achieved_at.desc(), PersonalRecord.id.desc())
             .offset(offset)
             .limit(limit)
@@ -90,4 +83,4 @@ class PersonalRecordRepository:
         pr: PersonalRecord,
     ):
         db.add(pr)
-        db.commit()
+        db.flush()

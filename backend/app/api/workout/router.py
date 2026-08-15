@@ -10,7 +10,12 @@ from app.api.workout.schema import (
     SessionExerciseResponse,
     SessionHistoryItem,
     SessionHistoryPage,
+    BodyPartWorkoutStat,
+    MuscleFatigueStat,
+    WeeklyWorkoutStat,
     WorkoutCalendarDay,
+    CalendarWorkoutBrief,
+    WorkoutStatisticsResponse,
     SessionDetailExercise,
     SessionDetailResponse,
     SessionDetailSet,
@@ -20,14 +25,33 @@ from app.api.workout.schema import (
 )
 from app.auth.jwt import get_current_user_id
 from app.db.dependencies import get_db
-from app.db.repositories.routineRepository import RoutineRepository
+from app.db.repositories.exerciseRepository import ExerciseRepository
 from app.db.repositories.workoutSessionRepository import (
     ActiveWorkoutSessionError,
-    WorkoutSessionReposiroty,
+    WorkoutSessionRepository,
 )
+from app.models.enum.exerciseCategory import ExerciseCategory
+from app.core.time import utc_now, utc_today
 
 
 router = APIRouter()
+
+WHOLE_BODY = 9
+ARMS = 10
+CARDIO = 11
+ARM_BODY_PARTS = frozenset((4, 5, 6))
+ALL_STRENGTH_GROUPS = frozenset((1, 2, 3, ARMS, 7, 8))
+STATISTICS_DAYS = 30
+RECOVERY_HOURS = 72
+FATIGUE_PER_SET = 14
+
+
+def get_statistics_body_part(exercise) -> int:
+    if exercise.category == ExerciseCategory.cardio:
+        return CARDIO
+    if exercise.body_part in ARM_BODY_PARTS:
+        return ARMS
+    return exercise.body_part
 
 
 def serialize_session(session) -> SessionResponse:
@@ -54,7 +78,7 @@ def serialize_session(session) -> SessionResponse:
 
 @router.get("/active", response_model=SessionResponse | None)
 def get_active_session(db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
-    session = WorkoutSessionReposiroty.get_active_session(db, user_id)
+    session = WorkoutSessionRepository.get_active_session(db, user_id)
     return serialize_session(session) if session else None
 
 
@@ -65,7 +89,7 @@ def get_session_history(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    sessions = WorkoutSessionReposiroty.get_history(db, user_id, offset, limit + 1)
+    sessions = WorkoutSessionRepository.get_history(db, user_id, offset, limit + 1)
     has_more = len(sessions) > limit
     items = sessions[:limit]
     return SessionHistoryPage(
@@ -74,6 +98,7 @@ def get_session_history(
                 id=session.id,
                 performed_at=session.started_at,
                 name=session.name or (session.routine.name if session.routine else "자유 운동"),
+                routine_icon=session.routine.icon if session.routine else None,
                 exercise_names=[
                     exercise.exercise.name_kr
                     for exercise in sorted(session.exercises, key=lambda value: value.exercise_order)
@@ -94,34 +119,174 @@ def get_session_history(
 
 @router.get("/calendar", response_model=list[WorkoutCalendarDay])
 def get_workout_calendar(
-    month: date = Query(default_factory=date.today),
+    month: date = Query(default_factory=utc_today),
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
     month_start = month.replace(day=1)
     month_end = month_start + timedelta(days=monthrange(month_start.year, month_start.month)[1])
-    sessions = WorkoutSessionReposiroty.get_completed_sessions_between(
+    activities = WorkoutSessionRepository.get_completed_activity_between(
         db,
         user_id,
         datetime.combine(month_start, time.min),
         datetime.combine(month_end, time.min),
     )
-    body_parts_by_day: dict[date, set[int]] = {}
-    for session in sessions:
-        for workout_exercise in session.exercises:
-            has_completed_set = any(
-                workout_set.completed and not workout_set.is_warmup
-                for workout_set in workout_exercise.sets
-            )
-            if has_completed_set:
-                body_parts_by_day.setdefault(session.started_at.date(), set()).add(
-                    workout_exercise.exercise.body_part
-                )
+    workout_rows = WorkoutSessionRepository.get_calendar_workouts_between(
+        db,
+        user_id,
+        datetime.combine(month_start, time.min),
+        datetime.combine(month_end, time.min),
+    )
+    completed_sets_by_day: dict[date, dict[int, int]] = {}
+    for activity in activities:
+        workout_date = activity.started_at.date()
+        body_part = (
+            CARDIO
+            if activity.category == ExerciseCategory.cardio
+            else ARMS if activity.body_part in ARM_BODY_PARTS else activity.body_part
+        )
+        daily_counts = completed_sets_by_day.setdefault(workout_date, {})
+        daily_counts[body_part] = daily_counts.get(body_part, 0) + int(activity.completed_sets)
 
-    return [
-        WorkoutCalendarDay(date=workout_date, body_parts=sorted(body_parts))
-        for workout_date, body_parts in body_parts_by_day.items()
-    ]
+    workouts_by_day: dict[date, dict[int, dict]] = {}
+    for row in workout_rows:
+        workout_date = row.started_at.date()
+        daily_workouts = workouts_by_day.setdefault(workout_date, {})
+        workout = daily_workouts.setdefault(
+            row.session_id,
+            {
+                "id": row.session_id,
+                "name": row.session_name or row.routine_name or "자유 운동",
+                "started_at": row.started_at,
+                "duration": max(
+                    0,
+                    int((row.ended_at - row.started_at).total_seconds() // 60),
+                ),
+                "volume": 0.0,
+                "completed_sets": 0,
+                "exercise_names": [],
+                "routine_icon": row.routine_icon,
+            },
+        )
+        workout["volume"] += float(row.volume or 0)
+        workout["completed_sets"] += int(row.completed_sets or 0)
+        if row.exercise_name:
+            workout["exercise_names"].append(row.exercise_name)
+
+    calendar_days = []
+    for workout_date in sorted(set(completed_sets_by_day) | set(workouts_by_day)):
+        completed_sets = completed_sets_by_day.get(workout_date, {})
+        if ALL_STRENGTH_GROUPS.issubset(completed_sets):
+            displayed_body_parts = [WHOLE_BODY]
+        else:
+            ranked_body_parts = sorted(completed_sets, key=lambda part: (-completed_sets[part], part))
+            displayed_body_parts = ranked_body_parts[:1]
+            if (
+                len(ranked_body_parts) > 1
+                and completed_sets[ranked_body_parts[0]] == completed_sets[ranked_body_parts[1]]
+            ):
+                displayed_body_parts.append(ranked_body_parts[1])
+        calendar_days.append(
+            WorkoutCalendarDay(
+                date=workout_date,
+                body_parts=displayed_body_parts,
+                workouts=[
+                    CalendarWorkoutBrief(**workout)
+                    for workout in workouts_by_day.get(workout_date, {}).values()
+                ],
+            )
+        )
+
+    return calendar_days
+
+
+@router.get("/statistics", response_model=WorkoutStatisticsResponse)
+def get_workout_statistics(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    now = utc_now()
+    period_start = now - timedelta(days=STATISTICS_DAYS)
+    sessions = WorkoutSessionRepository.get_completed_session_times_between(
+        db, user_id, period_start, now + timedelta(seconds=1)
+    )
+    activities = WorkoutSessionRepository.get_completed_activity_between(
+        db, user_id, period_start, now + timedelta(seconds=1)
+    )
+
+    body_part_totals: dict[int, dict[str, float | int]] = {}
+    fatigue_scores = {body_part: 0.0 for body_part in ALL_STRENGTH_GROUPS}
+    last_trained: dict[int, datetime] = {}
+    completed_set_total = 0
+    total_volume = 0.0
+
+    for activity in activities:
+        trained_at = activity.ended_at or activity.started_at
+        age_hours = max(0.0, (now - trained_at).total_seconds() / 3600)
+        recovery_factor = max(0.0, 1 - age_hours / RECOVERY_HOURS)
+        body_part = (
+            CARDIO
+            if activity.category == ExerciseCategory.cardio
+            else ARMS if activity.body_part in ARM_BODY_PARTS else activity.body_part
+        )
+        set_count = int(activity.completed_sets)
+        volume = float(activity.volume or 0)
+        totals = body_part_totals.setdefault(body_part, {"completed_sets": 0, "volume": 0.0})
+        totals["completed_sets"] += set_count
+        totals["volume"] += volume
+        completed_set_total += set_count
+        total_volume += volume
+        if body_part in fatigue_scores:
+            fatigue_scores[body_part] += set_count * FATIGUE_PER_SET * recovery_factor
+            if body_part not in last_trained or trained_at > last_trained[body_part]:
+                last_trained[body_part] = trained_at
+
+    weekly = []
+    for week_index in range(4):
+        week_start = (now - timedelta(days=(3 - week_index) * 7 + 6)).date()
+        week_end = week_start + timedelta(days=7)
+        week_sessions = [session for session in sessions if week_start <= session.started_at.date() < week_end]
+        weekly.append(WeeklyWorkoutStat(
+            week_start=week_start,
+            sessions=len(week_sessions),
+            completed_sets=sum(
+                int(activity.completed_sets)
+                for activity in activities
+                if week_start <= activity.started_at.date() < week_end
+            ),
+        ))
+
+    total_duration = sum(
+        max(0, int(((session.ended_at or session.started_at) - session.started_at).total_seconds() // 60))
+        for session in sessions
+    )
+    return WorkoutStatisticsResponse(
+        period_days=STATISTICS_DAYS,
+        sessions=len(sessions),
+        active_days=len({session.started_at.date() for session in sessions}),
+        completed_sets=completed_set_total,
+        total_volume=total_volume,
+        average_duration=round(total_duration / len(sessions)) if sessions else 0,
+        muscle_fatigue=[
+            MuscleFatigueStat(
+                body_part=body_part,
+                fatigue=min(100, round(fatigue_scores[body_part])),
+                last_trained_at=last_trained.get(body_part),
+            )
+            for body_part in (1, 2, 3, ARMS, 7, 8)
+        ],
+        body_parts=[
+            BodyPartWorkoutStat(
+                body_part=body_part,
+                completed_sets=int(totals["completed_sets"]),
+                volume=float(totals["volume"]),
+            )
+            for body_part, totals in sorted(
+                body_part_totals.items(), key=lambda item: (-item[1]["completed_sets"], item[0])
+            )
+        ],
+        weekly=weekly,
+    )
 
 
 @router.get("/{session_id}", response_model=SessionDetailResponse)
@@ -130,7 +295,7 @@ def get_session_detail(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    session = WorkoutSessionReposiroty.get_completed_session(db, user_id, session_id)
+    session = WorkoutSessionRepository.get_completed_session(db, user_id, session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="운동 기록을 찾을 수 없습니다.")
 
@@ -194,7 +359,7 @@ def delete_session(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
 ):
-    deleted = WorkoutSessionReposiroty.delete_completed_session(db, user_id, session_id)
+    deleted = WorkoutSessionRepository.delete_completed_session(db, user_id, session_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="운동 기록을 찾을 수 없습니다.")
 
@@ -202,7 +367,7 @@ def delete_session(
 @router.post("", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
 def start_session(request: StartSessionRequest, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
     try:
-        return serialize_session(WorkoutSessionReposiroty.start_session(db, user_id, request.routine_id))
+        return serialize_session(WorkoutSessionRepository.start_session(db, user_id, request.routine_id))
     except ActiveWorkoutSessionError as error:
         db.rollback()
         raise HTTPException(
@@ -219,15 +384,16 @@ def start_session(request: StartSessionRequest, db: Session = Depends(get_db), u
 
 @router.put("/{session_id}/finish", response_model=FinishSessionResponse)
 def finish_session(session_id: int, request: FinishSessionRequest, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
-    session = WorkoutSessionReposiroty.get_active_session(db, user_id)
+    session = WorkoutSessionRepository.get_active_session_for_update(db, user_id)
     if session is None or session.id != session_id:
         raise HTTPException(status_code=404, detail="진행 중인 운동을 찾을 수 없습니다.")
 
-    valid_ids = {exercise.id for exercise in RoutineRepository.get_exercises(db)}
-    if any(item.exercise_id not in valid_ids for item in request.exercises):
+    requested_ids = {item.exercise_id for item in request.exercises}
+    valid_ids = ExerciseRepository.get_existing_ids(db, list(requested_ids))
+    if valid_ids != requested_ids:
         raise HTTPException(status_code=400, detail="존재하지 않는 운동이 포함되어 있습니다.")
 
-    finished = WorkoutSessionReposiroty.finish_session(
+    finished = WorkoutSessionRepository.finish_session(
         db,
         session,
         [item.model_dump() for item in request.exercises],

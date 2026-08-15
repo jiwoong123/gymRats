@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.api.user.schema import UserProfileUpdateRequest
 from app.db.repositories.userRepository import UserRepository
+from app.core.time import utc_today
 
 
 def update_me(
@@ -15,7 +16,7 @@ def update_me(
     if user is None:
         raise ValueError("User not found")
 
-    if request.birth is not None and request.birth > date.today():
+    if request.birth is not None and request.birth > utc_today():
         raise ValueError("Birth date cannot be in the future")
 
     values = request.model_dump(exclude_unset=True)
@@ -25,6 +26,8 @@ def update_me(
         raise ValueError("Gender cannot be null")
     if "birth" in values and values["birth"] is None:
         raise ValueError("Birth date cannot be null")
+    if "training_level" in values and values["training_level"] is None:
+        raise ValueError("Training level cannot be null")
 
     if not values:
         return user

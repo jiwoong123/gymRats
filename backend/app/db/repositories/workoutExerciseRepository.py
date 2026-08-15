@@ -10,7 +10,7 @@ class WorkoutExerciseRepository:
         workoutExercise: WorkoutExercise,
     ):
         db.add(workoutExercise)
-        db.commit()
+        db.flush()
 
 
     @staticmethod

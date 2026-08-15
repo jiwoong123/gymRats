@@ -1,0 +1,25 @@
+.routine-manage-page { min-height: 100%; padding: 52px 20px 30px; color: var(--foreground); }
+.routine-manage-header { display: grid; grid-template-columns: 46px 1fr auto; align-items: center; gap: 12px; margin-bottom: 22px; }
+.routine-manage-header > button:first-child { width: 46px; height: 46px; display: grid; place-items: center; color: var(--foreground); background: var(--card); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; }
+.routine-manage-header p { margin: 0 0 3px; color: var(--muted-foreground); font: .65rem "JetBrains Mono", monospace; letter-spacing: .13em; }
+.routine-manage-header h1 { margin: 0; font: 900 2rem/1.1 "Barlow Condensed", sans-serif; }
+.routine-manage-add { padding: 9px 11px; display: flex; align-items: center; gap: 4px; color: var(--primary-foreground); background: var(--primary); border: 0; border-radius: 10px; font-weight: 800; cursor: pointer; }
+.routine-manage-state, .routine-manage-empty { min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted-foreground); text-align: center; }
+.routine-manage-state p, .routine-manage-empty p { margin: 0; font-size: .8rem; }
+.routine-manage-state button, .routine-manage-empty button { padding: 10px 13px; display: flex; align-items: center; gap: 5px; color: var(--primary-foreground); background: var(--primary); border: 0; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.routine-manage-empty h2 { margin: 4px 0 0; font-size: 1rem; }
+.routine-manage-list { display: flex; flex-direction: column; gap: 10px; }
+.routine-manage-count { margin: 0 3px 2px; color: var(--muted-foreground); font-size: .72rem; }
+.routine-manage-error { margin: 0; padding: 10px 12px; color: var(--destructive-lighter); background: rgb(var(--destructive-rgb) / .08); border-radius: 10px; font-size: .74rem; }
+.routine-manage-card { overflow: hidden; padding: 15px; display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 11px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; }
+.routine-manage-main { min-width: 0; padding: 0; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 11px; color: var(--foreground); text-align: left; background: none; border: 0; cursor: pointer; }
+.routine-manage-icon { width: 40px; height: 40px; display: grid; place-items: center; color: var(--primary); background: rgb(var(--primary-rgb) / .09); border: 1px solid rgb(var(--primary-rgb) / .18); border-radius: 12px; cursor: pointer; }
+.routine-manage-info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.routine-manage-info strong { font-size: .95rem; }
+.routine-manage-info small { color: var(--primary); font-size: .68rem; }
+.routine-manage-info > span { overflow: hidden; color: var(--muted-foreground); font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
+.routine-manage-main > svg { color: var(--muted-foreground); }
+.routine-icon-picker { grid-column: 1 / -1; padding-top: 11px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; border-top: 1px solid var(--border); }
+.routine-icon-picker button { aspect-ratio: 1; display: grid; place-items: center; color: var(--muted-foreground); background: var(--secondary); border: 1px solid transparent; border-radius: 10px; cursor: pointer; }
+.routine-icon-picker button.selected { color: var(--primary); background: rgb(var(--primary-rgb) / .1); border-color: rgb(var(--primary-rgb) / .3); }
+.routine-icon-picker button:disabled { opacity: .45; cursor: wait; }

@@ -20,6 +20,7 @@ class WeeklyActivityItem(BaseModel):
 class QuickWorkout(BaseModel):
     routine_id: int
     name: str
+    icon: str
 
 
 class RecentWorkout(BaseModel):

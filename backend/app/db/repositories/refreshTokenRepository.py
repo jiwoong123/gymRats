@@ -11,17 +11,29 @@ class RefreshTokenRepository:
         token: RefreshToken,
     ):
         db.add(token)
-        db.commit()
+        db.flush()
 
     @staticmethod
     def get_refresh_token(
         db: Session,
         token_hashed: str
-    ):
+    ) -> RefreshToken | None:
 
         return (
             db.query(RefreshToken)
             .filter(RefreshToken.token_hashed == token_hashed)
+            .first()
+        )
+
+    @staticmethod
+    def get_refresh_token_for_update(
+        db: Session,
+        token_hashed: str,
+    ) -> RefreshToken | None:
+        return (
+            db.query(RefreshToken)
+            .filter(RefreshToken.token_hashed == token_hashed)
+            .with_for_update()
             .first()
         )
 
@@ -31,4 +43,4 @@ class RefreshTokenRepository:
         token: RefreshToken,
     ):
         db.delete(token)
-        db.commit()
+        db.flush()

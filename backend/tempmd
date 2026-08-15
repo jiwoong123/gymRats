@@ -1,0 +1,196 @@
+  ## Highest priority
+
+  1. Access-token validation accepts refresh tokens
+
+  backend/app/auth/jwt.py:61 decodes the JWT but never verifies payload["type"] == "access". A valid refresh token can therefore authenticate against protected API endpoints.
+
+  Also, missing or malformed sub values can produce an uncaught KeyError or ValueError, returning HTTP 500.
+
+  Recommendation:
+
+  - Require type == "access".
+  - Validate sub explicitly.
+  - Catch JWT, missing-claim, and conversion errors.
+  - Return one consistent 401 response.
+
+  2. Refresh-token rotation is not atomic
+
+  backend/app/api/auth/services/refresh.py:39 performs:
+
+  1. Read old token.
+  2. Delete and commit.
+  3. Generate new token.
+  4. Insert and commit.
+
+  If insertion fails, the old token has already been destroyed. Concurrent refresh requests can also race.
+
+  Recommendation:
+
+  - Lock the stored token row with FOR UPDATE.
+  - Delete the old token and insert the replacement in one transaction.
+  - Commit only after the complete rotation succeeds.
+  - Add a random jti claim so tokens created within the same second are always distinct.
+
+  3. Transaction ownership is fragmented
+
+  Repositories commit internally throughout the backend, for example:
+
+  - backend/app/db/repositories/routineRepository.py:25
+  - backend/app/db/repositories/refreshTokenRepository.py:9
+  - backend/app/db/repositories/userRepository.py:26
+  - backend/app/db/repositories/workoutSessionRepository.py:178
+
+  This prevents a service operation involving multiple repositories from being atomic.
+
+  Recommendation:
+
+  - Repositories should normally add, delete, flush, and query.
+  - Services should own commit/rollback.
+  - Add rollback handling to backend/app/db/dependencies.py:6 when request processing raises an exception.
+
+  4. Signup has a uniqueness race
+
+  backend/app/api/auth/services/signup.py:14 checks whether an email exists and then inserts it. Two simultaneous requests can pass the check; one then receives an uncaught database integrity error.
+
+  Keep the friendly pre-check, but also catch the unique-constraint violation, roll back, and return HTTP 409.
+
+  ## Major query optimizations
+
+  5. Dashboard loads the same weekly data twice
+
+  backend/app/api/dashboard/services/getDashboardHome.py:31 calls get_weekly_summary() and get_weekly_activity() separately. Both invoke backend/app/db/repositories/workoutRepository.py:12, loading the
+  identical session/exercise/set graph twice.
+
+  Recommendation:
+
+  - Load weekly sessions once and calculate both responses from that collection; or
+  - Prefer one SQL aggregation grouped by workout date.
+
+  This is likely the best immediate performance improvement.
+
+  6. Streak calculation loads the user’s entire workout history
+
+  backend/app/db/repositories/workoutRepository.py:141 retrieves every completed session timestamp and creates a Python set. Its cost grows indefinitely.
+
+  Recommendation:
+
+  - Query distinct workout dates.
+  - Stop once the first date gap is found.
+  - Ideally implement the consecutive-date calculation in Oracle SQL using analytic functions.
+
+  7. Calendar and statistics endpoints load full ORM graphs
+
+  The calendar and 30-day statistics endpoints call backend/app/db/repositories/workoutSessionRepository.py:79, loading sessions, exercises, exercise definitions, and every set before aggregating in
+  Python.
+
+  Relevant consumers:
+
+  - backend/app/api/workout/router.py:118
+  - backend/app/api/workout/router.py:164
+
+  Recommendation:
+
+  - Calculate completed-set counts and volume using SQL SUM, COUNT, CASE, and GROUP BY.
+  - Return compact projection rows rather than ORM entity graphs.
+  - Only load detailed relationships for the session-detail endpoint.
+
+  8. Dashboard quick routines return every routine
+
+  backend/app/db/repositories/routineRepository.py:93 sorts and returns all user routines even though the dashboard presents them as “quick workouts.”
+
+  Recommendation:
+
+  - Add a bounded limit, likely 3–5.
+  - Add an index on workout_sessions(user_id, routine_id, started_at) to support the usage aggregation.
+  - Keep a separate unbounded method if another screen needs all routines.
+
+  9. Exercise validation loads the complete exercise catalog
+
+  Both routine and workout validation construct a set from ExerciseRepository.get_exercises(), including all polymorphic exercise columns:
+
+  - backend/app/api/routine/router.py:39
+  - backend/app/api/workout/router.py:358
+
+  Recommendation:
+
+  - Query only requested IDs: SELECT id WHERE id IN (...).
+  - Compare the returned IDs against the request.
+  - Avoid loading every exercise and subclass column.
+
+  ## Workout correctness and efficiency
+
+  10. Session finishing performs repeated flushes and rebuilds everything
+
+  backend/app/db/repositories/workoutSessionRepository.py:117 flushes once per exercise. backend/app/db/repositories/workoutSessionRepository.py:182 deletes the existing exercise graph and reconstructs
+  it.
+
+  Recommendation:
+
+  - Build related objects through ORM relationships and flush once.
+  - Lock the session row while finishing to prevent duplicate concurrent finishes.
+  - Consider updating existing rows when practical instead of delete/reinsert.
+  - Use bulk insertion only after measuring; relationship construction with one flush may already be sufficient.
+
+  There is also a correctness issue at backend/app/db/repositories/workoutSessionRepository.py:153: routine_exercise.rest_seconds or 90 converts a legitimate value of 0 to 90. Use 90 if value is None
+  else value.
+
+  11. PR generation needs stronger concurrency protection
+
+  backend/app/db/repositories/workoutSessionRepository.py:231 reads previous maximum records and then inserts new records. Simultaneous operations can both decide they created the same PR.
+
+  Recommendation:
+
+  - Lock the relevant record scope or serialize session completion per user.
+  - Define whether multiple historical PR rows with equal values are allowed.
+  - Add an index such as (user_id, exercise_id, record_type, value) for maximum-value queries.
+
+  ## Operational improvements
+
+  12. SQL logging is always enabled
+
+  backend/app/db/database.py:20 has echo=True. This increases log volume and can expose query parameters.
+
+  Make it environment-controlled and disable it in production.
+
+  13. Oracle pooling is layered
+
+  The application creates an Oracle driver pool and passes pool.acquire into SQLAlchemy, which then uses its own pool unless configured otherwise.
+
+  Recommendation:
+
+  - When retaining the Oracle driver pool, configure SQLAlchemy with NullPool.
+  - Alternatively, let SQLAlchemy manage pooling directly.
+  - Add connection health checks such as pool_pre_ping.
+
+  14. CORS configuration is invalid/risky for credentials
+
+  backend/app/main.py:19 combines allow_origins=["*"] with allow_credentials=True.
+
+  Configure explicit frontend origins from settings. This is safer and avoids inconsistent browser behavior around credentialed cross-origin requests.
+
+  15. Time handling is timezone-naive
+
+  The code mixes datetime.now(), date.today(), and Oracle timestamps, including:
+
+  - backend/app/auth/jwt.py:18
+  - backend/app/db/repositories/workoutSessionRepository.py:141
+  - backend/app/api/workout/router.py:169
+
+  Use timezone-aware UTC timestamps internally and convert to the user’s timezone only at API presentation boundaries. Otherwise workout dates, streaks, and token expiration can behave incorrectly after
+  deployment in another timezone.
+
+  16. No application test suite is present
+
+  I found dependency-internal tests but no backend application tests. Priority coverage should include:
+
+  - Refresh tokens cannot call protected endpoints.
+  - Refresh rotation/replay/concurrency.
+  - Only one active session per user.
+  - Concurrent session finishing.
+  - Routine recent-use ordering, including unused routines.
+  - Dashboard query count.
+  - User isolation on every repository query.
+  - Deletion cascades and PR behavior.
+
+  Suggested implementation order: JWT validation → transaction boundaries and refresh rotation → dashboard duplicate-load removal → streak/statistics aggregation → indexes based on measured Oracle
+  execution plans.
